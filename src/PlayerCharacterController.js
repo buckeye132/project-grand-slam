@@ -26,7 +26,11 @@ class PlayerCharacterController {
   }
 
   enemyClickListener(data) {
-    this.character.target = data.enemyController.character;
+    if (!data.enemyController) {
+      this.character.target = null;
+    } else {
+      this.character.target = data.enemyController.character;
+    }
   }
 
   update() {
