@@ -1,0 +1,17 @@
+{
+  "maps": [
+    {
+      "name": "test_map",
+      "assetPath": "assets/maps/test_map.json",
+      "tilesets": [
+        {
+          "name": "Outside_A5",
+          "assetPath": "assets/maps/Outside_A5.png"
+        }
+      ],
+      "layers": [
+        "Ground"
+      ]
+    }
+  ]
+}

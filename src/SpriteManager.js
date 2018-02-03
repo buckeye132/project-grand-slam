@@ -1,16 +1,8 @@
 class SpriteManager {
   constructor(spriteConfigPath, game) {
-    this.config = SpriteManager.getJson(spriteConfigPath);
+    this.config = JSONConfigLoader.LoadJson(spriteConfigPath);
     this.game = game;
     this.preloadedSprites = new Map();
-  }
-
-  static getJson(jsonUrl){
-    console.log("loading json");
-    var Httpreq = new XMLHttpRequest(); // a new request
-    Httpreq.open("GET",jsonUrl,false);
-    Httpreq.send(null);
-    return JSON.parse(Httpreq.responseText);
   }
 
   preload() {
