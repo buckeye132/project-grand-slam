@@ -5,11 +5,14 @@ const CHARACTER_KEY_BINDINGS = new Map(
   ["MOVE_RIGHT", Phaser.KeyCode.D],
   ["CANCEL", Phaser.KeyCode.ESC]]);
 const CHARACTER_KEY_CAPTURES = [Phaser.KeyCode.ESC];
+const POSITION_EVENT_INTERVAL = 500; // half second between events
 
 class PlayerCharacterController {
   constructor(character, game) {
     this.character = character;
     this.game = game;
+
+    this.nextPositionEventIn = 0;
 
     // initialize keyboard input
     for (var keyCapture of CHARACTER_KEY_CAPTURES) {
@@ -60,5 +63,13 @@ class PlayerCharacterController {
 
     // perform character update()
     this.character.update();
+
+    // broadcast our position
+    this.nextPositionEventIn -= timeDelta*1000;
+    if (this.nextPositionEventIn < 0) {
+      this.nextPositionEventIn += POSITION_EVENT_INTERVAL;
+      this.game.eventBus.publish("player_position",
+        {playerController: this, position: this.character.position});
+    }
   }
 }

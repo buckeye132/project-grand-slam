@@ -1,5 +1,3 @@
-const GAME_WORLD_SIZE = {w: 1000, h: 2000};
-
 class GrandSlamGame {
   constructor(targetElement) {
     this.physicsEngine = Phaser.Physics.ARCADE;
@@ -24,9 +22,9 @@ class GrandSlamGame {
 
   create() {
     // game setup
+    this.phaserGame.time.advancedTiming = true;
     this.phaserGame.input.mouse.capture = true;
     this.phaserGame.canvas.oncontextmenu = function (e) { e.preventDefault(); };
-    //this.phaserGame.world.setBounds(0, 0, GAME_WORLD_SIZE.w, GAME_WORLD_SIZE.h);
 
     // create map
     this.mapLayers = this.levelManager.createMapLayers(this.mapManager);
@@ -54,7 +52,7 @@ class GrandSlamGame {
   }
 
   render() {
-
+    this.phaserGame.debug.text(this.phaserGame.time.fps || '--', 2, 14, "#FF0000");
   }
 
   /* Private Helper Functions */
