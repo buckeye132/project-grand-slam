@@ -29,8 +29,9 @@ class Character {
 
   static createHighlightedCharacterSprite(phaserGame, physicsEngine, color) {
       var graphics = phaserGame.add.graphics(0, 0);
-      graphics.beginFill(color, 1);
-      graphics.drawCircle(0, 0, 96);
+      graphics.lineStyle(5, color, 1);
+      graphics.beginFill(0x000000, 0);
+      graphics.drawCircle(0, 0, 110);
 
       var sprite = phaserGame.add.sprite(0, 0);
       sprite.addChild(graphics);
@@ -103,7 +104,7 @@ class Character {
     if (flag) {
       if (!this.highlightSprite) {
         this.highlightSprite = Character.createHighlightedCharacterSprite(this.game.phaserGame,
-          this.game.physicsEngine, 0x00cc00);
+          this.game.physicsEngine, 0x009900);
         this.spriteGroup.add(this.highlightSprite);
         this.spriteGroup.bringToTop(this.sprite);
       }
