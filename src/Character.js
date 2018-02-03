@@ -20,6 +20,8 @@ class Character {
 
     this.health = DEFAULT_MAX_HEALTH;
     this.maxHealth = DEFAULT_MAX_HEALTH;
+
+    this.combatText = new CombatText(this.game, this);
   }
 
   static createCharacterSprite(game, name) {
@@ -88,16 +90,22 @@ class Character {
 
     this.sprite.animations.play(movement + "_" + facing);
     this.lastFacing = facing;
+
+    this.combatText.update();
   }
 
   destroy() {
     if (this.sprite) {
       this.sprite.destroy();
-      this.sprite = null;
+      delete this.sprite;
     }
     if (this.highlightSprite) {
       this.highlightSprite.destroy();
-      this.highlightSprite = null;
+      delete this.highlightSprite;
+    }
+    if (this.combatText) {
+      this.combatText.destroy();
+      delete this.combatText;
     }
   }
 
@@ -112,6 +120,7 @@ class Character {
   applyDamage(amount) {
     console.log("Taking damage " + amount);
     this.health -= Math.min(amount, this.health);
+    this.combatText.emitNumber(-amount);
   }
 
   get isDead() {
