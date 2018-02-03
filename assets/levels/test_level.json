@@ -1,0 +1,34 @@
+{
+  "level": {
+    "name": "test_level",
+    "mapLayers": [
+      {
+        "mapName": "test_map",
+        "layerIndex": 0,
+        "resizeWorld": true
+      }
+    ],
+    "enemies": [
+      {
+        "type": "baddie1",
+        "position": {
+          "x": -200,
+          "y": -1000
+        }
+      },
+      {
+        "type": "baddie2",
+        "position": {
+          "x": 200,
+          "y": -1500
+        }
+      }
+    ],
+    "playerSpawns": [
+      {
+        "x": 600,
+        "y": -200
+      }
+    ]
+  }
+}

@@ -49,10 +49,10 @@ class EnemyCharacterController {
         this.character.position.y += this.character.moveSpeed * timeDelta * deltaY;
 
       }
-      
-      // perform character update()
-      this.character.update();
     }
+
+    // perform character update()
+    this.character.update();
   }
 
   destroy() {
