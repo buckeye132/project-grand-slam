@@ -49,6 +49,7 @@ class Character {
     this.spriteGroup.x = this.position.x;
     this.spriteGroup.y = this.position.y;
 
+    // animation and facing is based on movement direction by default
     var facing = this.lastFacing;
     var movement = "idle";
     if (Math.abs(delta.x) > 0 || Math.abs(delta.y) > 0) {
@@ -59,6 +60,22 @@ class Character {
         else facing = "left";
       } else {
         if (delta.y > 0) facing = "down";
+        else facing = "up";
+      }
+    }
+
+    // if the character is targeting something, override facing
+    if (this.target) {
+      var deltaToTarget = {
+        x: this.target.position.x - this.position.x,
+        y: this.target.position.y - this.position.y
+      }
+
+      if (Math.abs(deltaToTarget.x) > Math.abs(deltaToTarget.y)) {
+        if (deltaToTarget.x > 0) facing = "right";
+        else facing = "left";
+      } else {
+        if (deltaToTarget.y > 0) facing = "down";
         else facing = "up";
       }
     }
