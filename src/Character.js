@@ -1,5 +1,5 @@
 class Character {
-  constructor(x, y, game, color, moveSpeed = 100) {
+  constructor(x, y, game, spriteName, moveSpeed = 100) {
     this.position = {x: x, y: y};
     this.game = game;
 
@@ -7,25 +7,22 @@ class Character {
     this.target = null;
 
     this.spriteGroup = this.game.phaserGame.add.group();
-    this.sprite = Character.createCharacterSprite(this.game.phaserGame,
-      this.game.physicsEngine, color);
+    this.sprite = Character.createCharacterSprite(this.game, spriteName);
     this.highlightSprite = null;
 
     this.spriteGroup.add(this.sprite);
     this.spriteGroup.x = x;
     this.spriteGroup.y = y;
+
+    this.lastFacing = "down";
   }
 
-  static createCharacterSprite(phaserGame, physicsEngine, color) {
-    var graphics = phaserGame.add.graphics(0, 0);
-    graphics.beginFill(color, 1);
-    graphics.drawCircle(0, 0, 48);
-
-    var sprite = phaserGame.add.sprite(0, 0);
-    sprite.addChild(graphics);
+  static createCharacterSprite(game, name) {
+    var sprite = game.spriteManager.createSprite(0, 0, name);
+    sprite.anchor.setTo(0.5, 0.5);
     sprite.inputEnabled = true;
 
-    phaserGame.physics.enable([ sprite ], physicsEngine);
+    game.phaserGame.physics.enable([ sprite ], game.physicsEngine);
 
     return sprite;
   }
@@ -33,7 +30,7 @@ class Character {
   static createHighlightedCharacterSprite(phaserGame, physicsEngine, color) {
       var graphics = phaserGame.add.graphics(0, 0);
       graphics.beginFill(color, 1);
-      graphics.drawCircle(0, 0, 54);
+      graphics.drawCircle(0, 0, 96);
 
       var sprite = phaserGame.add.sprite(0, 0);
       sprite.addChild(graphics);
@@ -44,13 +41,41 @@ class Character {
   }
 
   update() {
+    var delta = {
+      x: this.position.x - this.spriteGroup.x,
+      y: this.position.y - this.spriteGroup.y
+    }
+
     this.spriteGroup.x = this.position.x;
     this.spriteGroup.y = this.position.y;
+
+    var facing = this.lastFacing;
+    var movement = "idle";
+    if (Math.abs(delta.x) > 0 || Math.abs(delta.y) > 0) {
+      movement = "walk";
+
+      if (Math.abs(delta.x) > Math.abs(delta.y)) {
+        if (delta.x > 0) facing = "right";
+        else facing = "left";
+      } else {
+        if (delta.y > 0) facing = "down";
+        else facing = "up";
+      }
+    }
+
+    this.sprite.animations.play(movement + "_" + facing);
+    this.lastFacing = facing;
   }
 
   destroy() {
-    this.sprite.destroy();
-    this.sprite = null;
+    if (this.sprite) {
+      this.sprite.destroy();
+      this.sprite = null;
+    }
+    if (this.highlightSprite) {
+      this.highlightSprite.destroy();
+      this.highlightSprite = null;
+    }
   }
 
   onInputDown(callback, context) {

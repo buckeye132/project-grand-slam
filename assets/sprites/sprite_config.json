@@ -1,0 +1,304 @@
+{
+  "sprites": [
+    {
+      "type": "animated",
+      "name": "baddie1",
+      "assetPath": "assets/sprites/baddie1.png",
+      "spriteSheetProperties": {
+        "frameWidth": 96,
+        "frameHeight": 96,
+        "frameCount": 12
+      },
+      "animations": [
+        {
+          "name": "walk_down",
+          "frames": [0, 1, 2, 1],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "walk_left",
+          "frames": [3, 4, 5, 4],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "walk_right",
+          "frames": [6, 7, 8, 7],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "walk_up",
+          "frames": [9, 10, 11, 10],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "idle_down",
+          "frames": [0, 1, 2, 1],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "idle_left",
+          "frames": [3, 4, 5, 4],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "idle_right",
+          "frames": [6, 7, 8, 7],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "idle_up",
+          "frames": [9, 10, 11, 10],
+          "frameRate": 10,
+          "loop": true
+        }
+      ]
+    },
+    {
+      "type": "animated",
+      "name": "baddie2",
+      "assetPath": "assets/sprites/baddie2.png",
+      "spriteSheetProperties": {
+        "frameWidth": 96,
+        "frameHeight": 96,
+        "frameCount": 12
+      },
+      "animations": [
+        {
+          "name": "walk_down",
+          "frames": [0, 1, 2, 1],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "walk_left",
+          "frames": [3, 4, 5, 4],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "walk_right",
+          "frames": [6, 7, 8, 7],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "walk_up",
+          "frames": [9, 10, 11, 10],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "idle_down",
+          "frames": [1],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "idle_left",
+          "frames": [4],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "idle_right",
+          "frames": [7],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "idle_up",
+          "frames": [10],
+          "frameRate": 10,
+          "loop": true
+        }
+      ]
+    },
+    {
+      "type": "animated",
+      "name": "baddie3",
+      "assetPath": "assets/sprites/baddie3.png",
+      "spriteSheetProperties": {
+        "frameWidth": 96,
+        "frameHeight": 96,
+        "frameCount": 12
+      },
+      "animations": [
+        {
+          "name": "walk_down",
+          "frames": [0, 1, 2, 1],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "walk_left",
+          "frames": [3, 4, 5, 4],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "walk_right",
+          "frames": [6, 7, 8, 7],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "walk_up",
+          "frames": [9, 10, 11, 10],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "idle_down",
+          "frames": [1],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "idle_left",
+          "frames": [4],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "idle_right",
+          "frames": [7],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "idle_up",
+          "frames": [10],
+          "frameRate": 10,
+          "loop": true
+        }
+      ]
+    },
+    {
+      "type": "animated",
+      "name": "char1",
+      "assetPath": "assets/sprites/char1.png",
+      "spriteSheetProperties": {
+        "frameWidth": 96,
+        "frameHeight": 96,
+        "frameCount": 15
+      },
+      "animations": [
+        {
+          "name": "walk_down",
+          "frames": [0, 1, 2, 1],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "walk_left",
+          "frames": [3, 4, 5, 4],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "walk_right",
+          "frames": [6, 7, 8, 7],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "walk_up",
+          "frames": [9, 10, 11, 10],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "idle_down",
+          "frames": [1],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "idle_left",
+          "frames": [4],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "idle_right",
+          "frames": [7],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "idle_up",
+          "frames": [10],
+          "frameRate": 10,
+          "loop": true
+        }
+      ]
+    },
+    {
+      "type": "animated",
+      "name": "char2",
+      "assetPath": "assets/sprites/char2.png",
+      "spriteSheetProperties": {
+        "frameWidth": 96,
+        "frameHeight": 96,
+        "frameCount": 15
+      },
+      "animations": [
+        {
+          "name": "walk_down",
+          "frames": [0, 1, 2, 1],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "walk_left",
+          "frames": [3, 4, 5, 4],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "walk_right",
+          "frames": [6, 7, 8, 7],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "walk_up",
+          "frames": [9, 10, 11, 10],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "idle_down",
+          "frames": [1],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "idle_left",
+          "frames": [4],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "idle_right",
+          "frames": [7],
+          "frameRate": 10,
+          "loop": true
+        },
+        {
+          "name": "idle_up",
+          "frames": [10],
+          "frameRate": 10,
+          "loop": true
+        }
+      ]
+    }
+  ]
+}

@@ -9,7 +9,8 @@ var Game = window.Game || {};
     render: function() {gsGame.render()},
   }
   var phaserGame = this.phaserGame = new Phaser.Game(
-    800, 600,
+    window.innerWidth * window.devicePixelRatio,
+    window.innerHeight * window.devicePixelRatio,
     Phaser.AUTO,
     "game",
     gameState);

@@ -17,6 +17,7 @@ app.get('/js/EventEmitter.min.js', function(req, res) {
 // serve static content out of client directory
 app.use('/', express.static(__dirname + '/public'));
 app.use('/src', express.static(__dirname + '/src'));
+app.use('/assets', express.static(__dirname + '/assets'));
 
 // start listening, default port 2000
 server.listen(process.env.PORT || 2000);
