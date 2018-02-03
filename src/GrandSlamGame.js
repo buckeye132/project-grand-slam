@@ -5,6 +5,8 @@ class GrandSlamGame {
     this.playerCharacter = null;
     this.enemyCharacters = [];
 
+    this.eventBus = new EventBus();
+
     this.phaserGame = null; // set by main.js
   }
 
@@ -20,7 +22,7 @@ class GrandSlamGame {
 
     // player character
     this.playerCharacter = new Character(100, 100, this, 0x00FF00);
-    this.controllers.push(new KeyboardCharacterController(
+    this.controllers.push(new PlayerCharacterController(
       this.playerCharacter, this));
 
     // enemy characters
@@ -39,28 +41,11 @@ class GrandSlamGame {
 
   }
 
-  /* Helper Functions */
+  /* Private Helper Functions */
   createEnemy(x, y, target) {
     var enemy = new Character(x, y, this, 0xFF0000, 50);
     enemy.target = target;
-    enemy.clickCallback = this.reportEnemyClicked.bind(this);
     this.enemyCharacters.push(enemy);
-    this.controllers.push(new EnemyAiCharacterController(enemy, this, 80));
-  }
-
-  reportEnemyClicked(clickedEnemy) {
-    for (var enemy of this.enemyCharacters) {
-      if (clickedEnemy != enemy) {
-        enemy.isHighlighted = false;
-      }
-    }
-    clickedEnemy.isHighlighted = true;
-    this.playerCharacter.target = clickedEnemy;
-  }
-
-  unhighlightAllEnemies() {
-    for (var enemy of this.enemyCharacters) {
-      enemy.isHighlighted = false;
-    }
+    this.controllers.push(new EnemyCharacterController(enemy, this));
   }
 }

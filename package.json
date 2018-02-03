@@ -21,6 +21,7 @@
     "phaser": "^2.6.2",
     "requirejs": "^2.3.5",
     "socket.io": "^2.0.4",
-    "uuid": "^3.2.1"
+    "uuid": "^3.2.1",
+    "wolfy87-eventemitter": "^5.2.4"
   }
 }

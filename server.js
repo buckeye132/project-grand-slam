@@ -10,6 +10,9 @@ var uuid = require('uuid/v4');
 app.get('/js/phaser.min.js', function(req, res) {
   res.sendFile(__dirname + '/node_modules/phaser/build/phaser.min.js')
 });
+app.get('/js/EventEmitter.min.js', function(req, res) {
+  res.sendFile(__dirname + '/node_modules/wolfy87-eventemitter/EventEmitter.min.js')
+});
 
 // serve static content out of client directory
 app.use('/', express.static(__dirname + '/public'));

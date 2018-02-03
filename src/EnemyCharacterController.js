@@ -1,8 +1,29 @@
-class EnemyAiCharacterController {
-  constructor(character, game, desiredRange) {
+const DEFUALT_DESIRED_RANGE = 80;
+
+class EnemyCharacterController {
+  constructor(character, game) {
     this.game = game;
     this.character = character;
-    this.desiredRange = desiredRange;
+
+    this.desiredRange = DEFUALT_DESIRED_RANGE;
+
+    // detect mouse click input
+    this.character.onInputDown(this.clickCallback, this);
+
+    // listen for enemy_click events to control highlighting
+    this.game.eventBus.subscribe("enemy_click", this.enemyClickListener, this);
+  }
+
+  clickCallback(gameObject, pointer) {
+    this.game.eventBus.publish("enemy_click", {enemyController: this, pointer: pointer});
+  }
+
+  enemyClickListener(data) {
+    if (data.enemyController == this) {
+      this.character.isHighlighted = true;
+    } else {
+      this.character.isHighlighted = false;
+    }
   }
 
   update() {
@@ -31,5 +52,10 @@ class EnemyAiCharacterController {
         this.character.update();
       }
     }
+  }
+
+  destroy() {
+    this.character.destroy();
+    this.game.eventBus.unsubscribe("enemy_click", this.enemyClickListener);
   }
 }

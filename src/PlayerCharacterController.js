@@ -6,7 +6,7 @@ const CHARACTER_KEY_BINDINGS = new Map(
   ["CANCEL", Phaser.KeyCode.ESC]]);
 const CHARACTER_KEY_CAPTURES = [Phaser.KeyCode.ESC];
 
-class KeyboardCharacterController {
+class PlayerCharacterController {
   constructor(character, game) {
     this.character = character;
     this.game = game;
@@ -15,12 +15,18 @@ class KeyboardCharacterController {
     for (var keyCapture of CHARACTER_KEY_CAPTURES) {
       this.game.phaserGame.input.keyboard.addKeyCapture(keyCapture);
     }
-
     this.keyMap = new Map();
     for (let [alias, keycode] of CHARACTER_KEY_BINDINGS) {
       var key = this.game.phaserGame.input.keyboard.addKey(keycode);
       this.keyMap.set(alias, key);
     }
+
+    // listen for enemy_click events to set targeting
+    this.game.eventBus.subscribe("enemy_click", this.enemyClickListener, this);
+  }
+
+  enemyClickListener(data) {
+    this.character.target = data.enemyController.character;
   }
 
   update() {
@@ -40,7 +46,7 @@ class KeyboardCharacterController {
       moveX++;
     }
     if (this.keyMap.get("CANCEL").isDown) {
-      this.game.unhighlightAllEnemies();
+      this.game.eventBus.publish("enemy_click", {enemyController: null, pointer: null});
     }
 
     // update character state

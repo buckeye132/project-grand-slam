@@ -9,14 +9,11 @@ class Character {
     this.spriteGroup = this.game.phaserGame.add.group();
     this.sprite = Character.createCharacterSprite(this.game.phaserGame,
       this.game.physicsEngine, color);
-    this.sprite.events.onInputDown.add(this.onInputDown,this);
     this.highlightSprite = null;
 
     this.spriteGroup.add(this.sprite);
     this.spriteGroup.x = x;
     this.spriteGroup.y = y;
-
-    this.clickCallback = null;
   }
 
   static createCharacterSprite(phaserGame, physicsEngine, color) {
@@ -56,10 +53,8 @@ class Character {
     this.sprite = null;
   }
 
-  onInputDown() {
-    if (this.clickCallback) {
-      this.clickCallback(this);
-    }
+  onInputDown(callback, context) {
+    this.sprite.events.onInputDown.add(callback, context);
   }
 
   set isHighlighted(flag)  {
