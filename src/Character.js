@@ -1,3 +1,5 @@
+DEFAULT_MAX_HEALTH = 100;
+
 class Character {
   constructor(x, y, game, spriteName, moveSpeed = 100) {
     this.position = {x: x, y: y};
@@ -15,6 +17,9 @@ class Character {
     this.spriteGroup.y = y;
 
     this.lastFacing = "down";
+
+    this.health = DEFAULT_MAX_HEALTH;
+    this.maxHealth = DEFAULT_MAX_HEALTH;
   }
 
   static createCharacterSprite(game, name) {
@@ -96,8 +101,21 @@ class Character {
     }
   }
 
+  get isDestroyed() {
+    return this.sprite == null;
+  }
+
   onInputDown(callback, context) {
     this.sprite.events.onInputDown.add(callback, context);
+  }
+
+  applyDamage(amount) {
+    console.log("Taking damage " + amount);
+    this.health -= Math.min(amount, this.health);
+  }
+
+  get isDead() {
+    return this.health <= 0;
   }
 
   set isHighlighted(flag)  {
@@ -114,5 +132,17 @@ class Character {
         this.highlightSprite = null;
       }
     }
+  }
+
+  get distanceToTarget() {
+    var distanceToTarget = -1;
+    if (this.target) {
+      distanceToTarget = this.game.phaserGame.math.distance(
+        this.position.x,
+        this.position.y,
+        this.target.position.x,
+        this.target.position.y);
+    }
+    return distanceToTarget;
   }
 }

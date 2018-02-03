@@ -46,8 +46,31 @@ class GrandSlamGame {
 
   update() {
     // update all controllers
+    var destroyedControllers = [];
     for (var controller of this.controllers) {
       controller.update();
+
+      if (controller.isDestroyed) {
+        console.log("found destroyed controller.");
+        destroyedControllers.push(controller);
+      }
+    }
+
+    // discard distroyed controllers and characters
+    for (var destroyedController of destroyedControllers) {
+      var controllerIndex = this.controllers.indexOf(destroyedController);
+      this.controllers.splice(controllerIndex, 1);
+
+      if (this.playerCharacter == destroyedController.character) {
+        console.log("Player destroyed.");
+        delete this.playerCharacter;
+        this.playerCharacter = null;
+      } else {
+        console.log("Enemy destroyed.");
+        var enemyIndex = this.enemyCharacters.indexOf(destroyedController.character);
+        this.enemyCharacters.splice(enemyIndex, 1);
+        delete destroyedController.character;
+      }
     }
   }
 

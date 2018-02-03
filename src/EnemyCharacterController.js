@@ -25,11 +25,19 @@ class EnemyCharacterController {
 
   /* Input Callbacks */
   clickCallback(gameObject, pointer) {
+    if (this.isDestroyed) {
+      return;
+    }
+
     this.game.eventBus.publish("enemy_click", {enemyController: this, pointer: pointer});
   }
 
   /* Event Bus Listeners */
   enemyClickListener(data) {
+    if (this.isDestroyed) {
+      return;
+    }
+
     if (data.enemyController == this) {
       this.character.isHighlighted = true;
     } else {
@@ -38,6 +46,10 @@ class EnemyCharacterController {
   }
 
   playerPositionListener(data) {
+    if (this.isDestroyed) {
+      return;
+    }
+
     if (!this.character.target) {
       // quick exit
       if (Math.abs(data.position.x - this.character.position.x) > this.agroRange ||
@@ -70,6 +82,12 @@ class EnemyCharacterController {
 
  /* Public Functions */
   update() {
+    // did we die?
+    if (this.character.isDead) {
+      this.destroy();
+      return;
+    }
+
     // check if we've gone too far away from our initial position
     var distanceFromHome = this.game.phaserGame.math.distance(
       this.character.position.x,
@@ -93,11 +111,7 @@ class EnemyCharacterController {
     var deltaX = targetPosition.x - this.character.position.x;
     var deltaY = targetPosition.y - this.character.position.y;
 
-    var distance = this.game.phaserGame.math.distance(
-      this.character.position.x,
-      this.character.position.y,
-      targetPosition.x,
-      targetPosition.y);
+    var distance = this.character.distanceToTarget;
 
     if (distance > targetRange) {
       deltaX = deltaX / distance;
@@ -115,6 +129,10 @@ class EnemyCharacterController {
 
   destroy() {
     this.character.destroy();
-    this.game.eventBus.unsubscribe("enemy_click", this.enemyClickListener);
+    this.game.eventBus.unsubscribe("enemy_click", this.enemyClickListener, this);
+  }
+
+  get isDestroyed() {
+    return !this.character || this.character.isDestroyed;
   }
 }
