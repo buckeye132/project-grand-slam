@@ -13,6 +13,8 @@ class GrandSlamGame {
     this.mapManager = new MapManager("assets/config/map_config.json", this);
     this.levelManager = new LevelManager("assets/config/test_level.json", this);
 
+    this.hud = new HUD("assets/config/hud_config.json", this);
+
     this.phaserGame = null; // set by main.js
   }
 
@@ -44,8 +46,11 @@ class GrandSlamGame {
     // enemy characters
     var enemyControllers = this.levelManager.createEnemies();
     for (var enemyController of enemyControllers) {
-      this.controllers.push(enemyController);  
+      this.controllers.push(enemyController);
     }
+
+    // HUD
+    this.hud.createHud();
   }
 
   update() {
@@ -71,6 +76,8 @@ class GrandSlamGame {
         this.playerCharacter = null;
       }
     }
+
+    this.hud.update();
   }
 
   render() {

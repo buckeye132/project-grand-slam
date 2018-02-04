@@ -1,0 +1,26 @@
+{
+  "hudElements": [
+    {
+      "type": "status_bar",
+      "source": {
+        "type": "event_bus",
+        "eventName": "player_status",
+        "dataField": "healthPercent"
+      },
+      "orientation": "vertical",
+      "position": {
+        "x": -50,
+        "y": -225
+      },
+      "size": {
+        "width": 25,
+        "height": 200
+      },
+      "color": {
+        "border": "000000",
+        "filled": "ff0000",
+        "empty": "888888"
+      }
+    }
+  ]
+}

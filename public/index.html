@@ -7,22 +7,36 @@
     <script type="text/javascript" src="js/EventEmitter.min.js"></script>
     <title>Project Grand Slam</title>
 </head>
-<body>
+<body style="margin: 0px">
   <div id="game">
   </div>
-  <script type="text/javascript" src="src/EventBus.js"></script>
-  <script type="text/javascript" src="src/JSONConfigLoader.js"></script>
-  <script type="text/javascript" src="src/SpriteManager.js"></script>
-  <script type="text/javascript" src="src/WeaponManager.js"></script>
-  <script type="text/javascript" src="src/MapManager.js"></script>
-  <script type="text/javascript" src="src/LevelManager.js"></script>
-  <script type="text/javascript" src="src/EnemyManager.js"></script>
-  <script type="text/javascript" src="src/CombatText.js"></script>
-  <script type="text/javascript" src="src/Character.js"></script>
-  <script type="text/javascript" src="src/Weapon.js"></script>
-  <script type="text/javascript" src="src/PlayerCharacterController.js"></script>
-  <script type="text/javascript" src="src/EnemyCharacterController.js"></script>
+  <!-- util -->
+  <script type="text/javascript" src="src/util/EventBus.js"></script>
+  <script type="text/javascript" src="src/util/JSONConfigLoader.js"></script>
+  <script type="text/javascript" src="src/util/SpriteManager.js"></script>
+
+  <!-- character -->
+  <script type="text/javascript" src="src/character/Character.js"></script>
+  <script type="text/javascript" src="src/character/EnemyCharacterController.js"></script>
+  <script type="text/javascript" src="src/character/EnemyManager.js"></script>
+
+  <!-- combat -->
+  <script type="text/javascript" src="src/combat/Weapon.js"></script>
+  <script type="text/javascript" src="src/combat/WeaponManager.js"></script>
+  <script type="text/javascript" src="src/combat/CombatText.js"></script>
+
+  <!-- player -->
+  <script type="text/javascript" src="src/player/HUD.js"></script>
+  <script type="text/javascript" src="src/player/HUDStatusBar.js"></script>
+  <script type="text/javascript" src="src/player/PlayerCharacterController.js"></script>
+
+  <!-- level -->
+  <script type="text/javascript" src="src/level/MapManager.js"></script>
+  <script type="text/javascript" src="src/level/LevelManager.js"></script>
+
+  <!-- main -->
   <script type="text/javascript" src="src/GrandSlamGame.js"></script>
   <script type="text/javascript" src="src/main.js"></script>
+
 </body>
 </html>

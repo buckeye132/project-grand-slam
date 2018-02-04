@@ -103,6 +103,15 @@ class PlayerCharacterController {
       this.game.eventBus.publish("player_position",
         {playerController: this, position: this.character.position});
     }
+
+    // broadcast our status
+    var status = {};
+    status.healthPercent = (this.character.health / this.character.maxHealth);
+    if (this.character.target) {
+      status.targetHealthPercent =
+        (this.character.target.health / this.character.target.maxHealth);
+    }
+    this.game.eventBus.publish("player_status", status);
   }
 
   destroy() {
