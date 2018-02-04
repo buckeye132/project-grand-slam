@@ -6,6 +6,7 @@ const CHARACTER_KEY_BINDINGS = new Map(
   ["CANCEL", Phaser.KeyCode.ESC]]);
 const CHARACTER_KEY_CAPTURES = [Phaser.KeyCode.ESC];
 const POSITION_EVENT_INTERVAL = 500; // half second between events
+const DEFAULT_WEAPON = "basic_sword";
 
 class PlayerCharacterController {
   constructor(character, game) {
@@ -28,7 +29,7 @@ class PlayerCharacterController {
     this.game.eventBus.subscribe("enemy_click", this.enemyClickListener, this);
 
     // equip a basic melee weapon
-    this.weapon = new Weapon(this.game);
+    this.weapon = this.game.weaponManager.createWeapon(DEFAULT_WEAPON);
     this.autoAttacking = false;
   }
 

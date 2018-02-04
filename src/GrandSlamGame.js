@@ -9,6 +9,7 @@ class GrandSlamGame {
 
     this.spriteManager = new SpriteManager("assets/sprites/sprite_config.json", this);
     this.mapManager = new MapManager("assets/maps/map_config.json", this);
+    this.weaponManager = new WeaponManager(["assets/weapons/weapon_config.json"], this);
     this.levelManager = new LevelManager("assets/levels/test_level.json", this);
 
     this.phaserGame = null; // set by main.js
@@ -17,6 +18,7 @@ class GrandSlamGame {
   /* PHASER GAME STATES */
   preload() {
     this.spriteManager.preload();
+    this.weaponManager.preload();
     this.mapManager.preload();
   }
 

@@ -1,22 +1,18 @@
-const MIN_RANGE = 0;
-const MAX_RANGE = 80;
-const ATTACK_COOLDOWN = 1000;
-const DAMAGE_PER_HIT = 20;
-
 class Weapon {
-  constructor(game) {
+  constructor(game, config) {
     this.game = game;
-    this.range = {
-      min: MIN_RANGE,
-      max: MAX_RANGE
-    };
-    this.attackCooldown = ATTACK_COOLDOWN;
-    this.damagePerHit = DAMAGE_PER_HIT;
+
+    this.name = config.name;
+    this.range = Object.assign({}, config.range);
+    this.attackCooldown = config.attackCooldown;
+    this.damagePerHit = config.damagePerHit;
+
+    // state
     this.attackCooldownRemaining = 0;
   }
 
   canHit(range) {
-    return range >= MIN_RANGE && range <= MAX_RANGE;
+    return range >= this.range.min && range <= this.range.max;
   }
 
   attack(character) {

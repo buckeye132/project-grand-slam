@@ -1,0 +1,13 @@
+{
+  "weapons": [
+    {
+      "name": "basic_sword",
+      "range": {
+        "min": 0,
+        "max": 100
+      },
+      "attackCooldown": 1000,
+      "damagePerHit": 20
+    }
+  ]
+}
