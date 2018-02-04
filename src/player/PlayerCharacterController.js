@@ -31,6 +31,11 @@ class PlayerCharacterController {
     // equip a basic melee weapon
     this.weapon = this.game.weaponManager.createWeapon(DEFAULT_WEAPON);
     this.autoAttacking = false;
+
+    // equip skills
+    this.game.eventBus.publish("set_skill_1",
+      {newSkill: {spriteName: "skill_icons", frame: 0}});
+    this.game.eventBus.subscribe("skill_1_click", this.skillClickListener, this);
   }
 
   enemyClickListener(data) {
@@ -43,6 +48,10 @@ class PlayerCharacterController {
         this.autoAttacking = true;
       }
     }
+  }
+
+  skillClickListener(data) {
+    console.log("Skill clicked: " + data.eventName);
   }
 
   update() {

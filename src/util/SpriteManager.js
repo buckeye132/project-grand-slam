@@ -15,7 +15,15 @@ class SpriteManager {
           spriteConfig.spriteSheetProperties.frameHeight,
           spriteConfig.spriteSheetProperties.frameCount);
 
-        console.log("sprite preloaded: " + spriteConfig.name);
+        this.preloadedSprites.set(spriteConfig.name, spriteConfig);
+      } else if (spriteConfig.type == "sheet") {
+        this.game.phaserGame.load.spritesheet(
+          spriteConfig.name,
+          spriteConfig.assetPath,
+          spriteConfig.spriteSheetProperties.frameWidth,
+          spriteConfig.spriteSheetProperties.frameHeight,
+          spriteConfig.spriteSheetProperties.frameCount);
+
         this.preloadedSprites.set(spriteConfig.name, spriteConfig);
       } else {
         console.error("Unknown sprite type: " + spriteConfig.type);
@@ -32,10 +40,12 @@ class SpriteManager {
 
     var sprite = this.game.phaserGame.add.sprite(x, y, name);
 
-    // add animations
-    for (var animationConfig of spriteConfig.animations) {
-      sprite.animations.add(animationConfig.name, animationConfig.frames,
-        animationConfig.frameRate, animationConfig.loop);
+    if (spriteConfig.type == "animated") {
+      // add animations
+      for (var animationConfig of spriteConfig.animations) {
+        sprite.animations.add(animationConfig.name, animationConfig.frames,
+          animationConfig.frameRate, animationConfig.loop);
+      }
     }
 
     return sprite;

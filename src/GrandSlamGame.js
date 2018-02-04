@@ -35,6 +35,9 @@ class GrandSlamGame {
     // create map
     this.mapLayers = this.levelManager.createMapLayers(this.mapManager);
 
+    // create HUD
+    this.hud.createHud();
+
     // player character
     var playerSpawn = this.levelManager.getNextPlayerSpawnPosition();
     console.log("spawning player at " + playerSpawn.x, + " " + playerSpawn.y);
@@ -48,9 +51,6 @@ class GrandSlamGame {
     for (var enemyController of enemyControllers) {
       this.controllers.push(enemyController);
     }
-
-    // HUD
-    this.hud.createHud();
   }
 
   update() {

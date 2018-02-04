@@ -57,7 +57,26 @@
       },
       "font": "30px Arial",
       "color": "ff0000"
-
+    },
+    {
+      "type": "button",
+      "source": {
+        "type": "event_bus",
+        "eventName": "set_skill_1",
+        "dataField": "newSkill"
+      },
+      "destination": {
+        "type": "event_bus",
+        "eventName": "skill_1_click"
+      },
+      "position": {
+        "x": 100,
+        "y": -75
+      },
+      "size": {
+        "width": 50,
+        "height": 50
+      }
     }
   ]
 }

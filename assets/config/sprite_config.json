@@ -299,6 +299,16 @@
           "loop": true
         }
       ]
+    },
+    {
+      "type": "sheet",
+      "name": "skill_icons",
+      "assetPath": "assets/sprites/skill_icons.png",
+      "spriteSheetProperties": {
+        "frameWidth": 66,
+        "frameHeight": 66,
+        "frameCount": 113
+      }
     }
   ]
 }

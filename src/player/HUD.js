@@ -8,8 +8,10 @@ class HUD {
     for (var elementConfig of this.config.hudElements) {
       if (elementConfig.type == "status_bar") {
         this.elements.push(new HUDStatusBar(this.game, this, elementConfig));
-      } else if(elementConfig.type == "label") {
+      } else if (elementConfig.type == "label") {
         this.elements.push(new HUDLabel(this.game, this, elementConfig));
+      } else if (elementConfig.type == "button") {
+        this.elements.push(new HUDButton(this.game, this, elementConfig));
       } else {
         console.log("Unrecognized element type: " + elementConfig.type);
       }
