@@ -7,10 +7,10 @@ class GrandSlamGame {
 
     this.eventBus = new EventBus();
 
-    this.spriteManager = new SpriteManager("assets/sprites/sprite_config.json", this);
-    this.mapManager = new MapManager("assets/maps/map_config.json", this);
-    this.weaponManager = new WeaponManager(["assets/weapons/weapon_config.json"], this);
-    this.levelManager = new LevelManager("assets/levels/test_level.json", this);
+    this.spriteManager = new SpriteManager("assets/config/sprite_config.json", this);
+    this.mapManager = new MapManager("assets/config/map_config.json", this);
+    this.weaponManager = new WeaponManager(["assets/config/weapon_config.json"], this);
+    this.levelManager = new LevelManager("assets/config/test_level.json", this);
 
     this.phaserGame = null; // set by main.js
   }
