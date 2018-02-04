@@ -49,12 +49,9 @@ class LevelManager {
     for (var enemyConfig of this.config.level.enemies) {
       var position = this.transformRelativePosition(enemyConfig.position);
 
-      var enemy = new Character(
-        position.x,
-        position.y,
-        this.game,
-        enemyConfig.type, // right now the type name just references a sprite name directly
-        50);
+
+      var enemy = this.game.enemyManager.createEnemy(enemyConfig.type,
+        position.x, position.y);
       enemies.push(enemy);
     }
 

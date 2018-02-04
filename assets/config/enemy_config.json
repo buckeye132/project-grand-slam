@@ -1,0 +1,31 @@
+{
+  "enemyTypes": [
+    {
+      "name": "baddie1",
+      "spriteName": "baddie1",
+      "weaponName": "basic_enemy_sword",
+      "movementSpeed": 50,
+      "desiredRange": 90,
+      "agroRange": 300,
+      "chaseDistance": 500
+    },
+    {
+      "name": "baddie2",
+      "spriteName": "baddie2",
+      "weaponName": "basic_enemy_sword",
+      "movementSpeed": 50,
+      "desiredRange": 90,
+      "agroRange": 300,
+      "chaseDistance": 500
+    },
+    {
+      "name": "baddie3",
+      "spriteName": "baddie3",
+      "weaponName": "basic_enemy_sword",
+      "movementSpeed": 50,
+      "desiredRange": 90,
+      "agroRange": 300,
+      "chaseDistance": 500
+    }
+  ]
+}

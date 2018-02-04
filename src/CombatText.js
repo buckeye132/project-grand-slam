@@ -1,4 +1,4 @@
-const Y_OFFSET = -75;
+const Y_OFFSET = -50;
 const SCROLL_SPEED = 75;
 const FADE_SPEED = 0.5;
 const FONT = "20px Arial";

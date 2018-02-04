@@ -8,8 +8,9 @@ class GrandSlamGame {
     this.eventBus = new EventBus();
 
     this.spriteManager = new SpriteManager("assets/config/sprite_config.json", this);
-    this.mapManager = new MapManager("assets/config/map_config.json", this);
     this.weaponManager = new WeaponManager(["assets/config/weapon_config.json"], this);
+    this.enemyManager = new EnemyManager(["assets/config/enemy_config.json"], this);
+    this.mapManager = new MapManager("assets/config/map_config.json", this);
     this.levelManager = new LevelManager("assets/config/test_level.json", this);
 
     this.phaserGame = null; // set by main.js
@@ -19,6 +20,7 @@ class GrandSlamGame {
   preload() {
     this.spriteManager.preload();
     this.weaponManager.preload();
+    this.enemyManager.preload();
     this.mapManager.preload();
   }
 
@@ -40,9 +42,9 @@ class GrandSlamGame {
     this.setCameraFollow(this.playerCharacter.sprite);
 
     // enemy characters
-    this.enemyCharacters = this.levelManager.createEnemies();
-    for (var enemyCharacter of this.enemyCharacters) {
-      this.controllers.push(new EnemyCharacterController(enemyCharacter, this));
+    var enemyControllers = this.levelManager.createEnemies();
+    for (var enemyController of enemyControllers) {
+      this.controllers.push(enemyController);  
     }
   }
 
@@ -67,11 +69,6 @@ class GrandSlamGame {
         console.log("Player destroyed.");
         delete this.playerCharacter;
         this.playerCharacter = null;
-      } else {
-        console.log("Enemy destroyed.");
-        var enemyIndex = this.enemyCharacters.indexOf(destroyedController.character);
-        this.enemyCharacters.splice(enemyIndex, 1);
-        delete destroyedController.character;
       }
     }
   }

@@ -8,6 +8,15 @@
       },
       "attackCooldown": 1000,
       "damagePerHit": 20
+    },
+    {
+      "name": "basic_enemy_sword",
+      "range": {
+        "min": 0,
+        "max": 100
+      },
+      "attackCooldown": 2000,
+      "damagePerHit": 5
     }
   ]
 }

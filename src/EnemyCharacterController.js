@@ -1,15 +1,15 @@
-const DEFUALT_DESIRED_RANGE = 80;
-const DEFAULT_AGRO_RANGE = 300;
-const DEFAULT_CHASE_DISTANCE = 500;
-
 class EnemyCharacterController {
-  constructor(character, game) {
+  constructor(x, y, config, game) {
     this.game = game;
-    this.character = character;
+    this.character = new Character(x, y, game, config.spriteName,
+      config.moveSpeed);
+    this.desiredRange = config.desiredRange;
+    this.agroRange = config.agroRange;
+    this.chaseDistance = config.chaseDistance;
 
-    this.desiredRange = DEFUALT_DESIRED_RANGE;
-    this.agroRange = DEFAULT_AGRO_RANGE;
-    this.chaseDistance = DEFAULT_CHASE_DISTANCE;
+    if (config.weaponName) {
+      this.weapon = this.game.weaponManager.createWeapon(config.weaponName);
+    }
 
     this.initialPosition = Object.assign({}, this.character.position);
 
@@ -88,6 +88,11 @@ class EnemyCharacterController {
       return;
     }
 
+    // is our target dead?
+    if (this.character.target && this.character.target.isDead) {
+      this.character.target = null;
+    }
+
     // check if we've gone too far away from our initial position
     var distanceFromHome = this.game.phaserGame.math.distance(
       this.character.position.x,
@@ -125,6 +130,14 @@ class EnemyCharacterController {
 
     // perform character update()
     this.character.update();
+    this.weapon.update();
+
+    // try attacking
+    if (this.character.target) {
+      if (this.weapon.canHit(this.character.distanceToTarget)) {
+        this.weapon.attack(this.character.target);
+      }
+    }
   }
 
   destroy() {
