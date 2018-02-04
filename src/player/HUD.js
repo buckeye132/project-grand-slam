@@ -8,6 +8,8 @@ class HUD {
     for (var elementConfig of this.config.hudElements) {
       if (elementConfig.type == "status_bar") {
         this.elements.push(new HUDStatusBar(this.game, this, elementConfig));
+      } else if(elementConfig.type == "label") {
+        this.elements.push(new HUDLabel(this.game, this, elementConfig));
       } else {
         console.log("Unrecognized element type: " + elementConfig.type);
       }
@@ -35,19 +37,31 @@ class HUD {
     }
   }
 
-  calculateAbsolutePosition(relativePosition) {
-    var absolutePosition = Object.assign({}, relativePosition);
+  calculateAbsolutePosition(relativePosition, size) {
+    return {
+      x: HUD.AdjustRelativeValue(relativePosition.x, this.game.phaserGame.width, size.width),
+      y: HUD.AdjustRelativeValue(relativePosition.y, this.game.phaserGame.height, size.height)
+    };
+  }
 
-    console.log("game size: " + this.game.phaserGame.width + " " + this.game.phaserGame.height);
+  static AdjustRelativeValue(position, windowSize, objectSize) {
+    var result = 0;
 
-    if (absolutePosition.x < 0) {
-      absolutePosition.x = this.game.phaserGame.width + absolutePosition.x;
+    if (typeof position === "string" || position instanceof String) {
+      if (position === "centered") {
+        result = (windowSize - objectSize) / 2;
+      } else {
+        console.error("Unrecognized position keyword: " + position);
+      }
+    } else {
+      if (position < 0) {
+        result = windowSize + position;
+      } else {
+        result = position;
+      }
     }
-    if (absolutePosition.y < 0) {
-      absolutePosition.y = this.game.phaserGame.height + absolutePosition.y;
-    }
 
-    return absolutePosition;
+    return result;
   }
 
   static ParseColorString(colorString) {

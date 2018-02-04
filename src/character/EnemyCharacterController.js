@@ -1,7 +1,7 @@
 class EnemyCharacterController {
   constructor(x, y, config, game) {
     this.game = game;
-    this.character = new Character(x, y, game, config.spriteName,
+    this.character = new Character(x, y, game, config.spriteName, config.name,
       config.moveSpeed);
     this.desiredRange = config.desiredRange;
     this.agroRange = config.agroRange;
@@ -116,7 +116,7 @@ class EnemyCharacterController {
     var deltaX = targetPosition.x - this.character.position.x;
     var deltaY = targetPosition.y - this.character.position.y;
 
-    var distance = this.character.distanceToTarget;
+    var distance = this.character.distanceTo(targetPosition);
 
     if (distance > targetRange) {
       deltaX = deltaX / distance;

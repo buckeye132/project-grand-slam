@@ -1,9 +1,10 @@
 DEFAULT_MAX_HEALTH = 100;
 
 class Character {
-  constructor(x, y, game, spriteName, moveSpeed = 100) {
+  constructor(x, y, game, spriteName, name, moveSpeed = 100) {
     this.position = {x: x, y: y};
     this.game = game;
+    this.name = name;
 
     this.moveSpeed = moveSpeed;
     this.target = null;
@@ -153,5 +154,13 @@ class Character {
         this.target.position.y);
     }
     return distanceToTarget;
+  }
+
+  distanceTo(position) {
+    return this.game.phaserGame.math.distance(
+      this.position.x,
+      this.position.y,
+      position.x,
+      position.y);
   }
 }

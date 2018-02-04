@@ -38,7 +38,7 @@ class GrandSlamGame {
     // player character
     var playerSpawn = this.levelManager.getNextPlayerSpawnPosition();
     console.log("spawning player at " + playerSpawn.x, + " " + playerSpawn.y);
-    this.playerCharacter = new Character(playerSpawn.x, playerSpawn.y, this, "char1");
+    this.playerCharacter = new Character(playerSpawn.x, playerSpawn.y, this, "char1", "Player");
     this.controllers.push(new PlayerCharacterController(
       this.playerCharacter, this));
     this.setCameraFollow(this.playerCharacter.sprite);

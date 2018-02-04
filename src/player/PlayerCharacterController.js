@@ -110,6 +110,7 @@ class PlayerCharacterController {
     if (this.character.target) {
       status.targetHealthPercent =
         (this.character.target.health / this.character.target.maxHealth);
+      status.targetName = this.character.target.name;
     }
     this.game.eventBus.publish("player_status", status);
   }

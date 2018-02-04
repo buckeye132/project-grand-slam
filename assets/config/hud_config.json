@@ -9,7 +9,7 @@
       },
       "orientation": "vertical",
       "position": {
-        "x": -50,
+        "x": 25,
         "y": -225
       },
       "size": {
@@ -21,6 +21,43 @@
         "filled": "ff0000",
         "empty": "888888"
       }
+    },
+    {
+      "type": "status_bar",
+      "source": {
+        "type": "event_bus",
+        "eventName": "player_status",
+        "dataField": "targetHealthPercent"
+      },
+      "orientation": "horizontal",
+      "position": {
+        "x": "centered",
+        "y": 75
+      },
+      "size": {
+        "width": 200,
+        "height": 25
+      },
+      "color": {
+        "border": "000000",
+        "filled": "ff0000",
+        "empty": "888888"
+      }
+    },
+    {
+      "type": "label",
+      "source": {
+        "type": "event_bus",
+        "eventName": "player_status",
+        "dataField": "targetName"
+      },
+      "position": {
+        "x": "centered",
+        "y": 25
+      },
+      "font": "30px Arial",
+      "color": "ff0000"
+
     }
   ]
 }
