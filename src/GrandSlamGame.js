@@ -31,6 +31,7 @@ class GrandSlamGame {
     this.phaserGame.time.advancedTiming = true;
     this.phaserGame.input.mouse.capture = true;
     this.phaserGame.canvas.oncontextmenu = function (e) { e.preventDefault(); };
+    this.phaserGame.physics.startSystem(this.physicsEngine);
 
     // create map
     this.mapLayers = this.levelManager.createMapLayers(this.mapManager);

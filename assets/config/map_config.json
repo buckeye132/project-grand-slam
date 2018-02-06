@@ -7,11 +7,16 @@
         {
           "name": "Outside_A5",
           "assetPath": "assets/maps/Outside_A5.png"
+        },
+        {
+          "name": "Outside_more",
+          "assetPath": "assets/maps/Outside_more.png"
         }
       ],
       "layers": [
         "Ground"
-      ]
+      ],
+      "collideTiles": [270, 113, 114, 115]
     }
   ]
 }

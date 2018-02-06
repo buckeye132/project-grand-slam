@@ -42,6 +42,10 @@ class MapManager {
       this.tilemaps.set(name, tilemap);
     }
 
-    return tilemap.createLayer(mapConfig.layers[layerIndex]);
+    var layer =  tilemap.createLayer(mapConfig.layers[layerIndex]);
+    this.game.phaserGame.physics.enable([ layer ], this.game.physicsEngine);
+    tilemap.setCollision(mapConfig.collideTiles, true, layer);
+
+    return layer;
   }
 }

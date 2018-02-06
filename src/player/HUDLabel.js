@@ -32,11 +32,8 @@ class HUDLabel {
 
   update() {
     if (this.value !== this.textObject.text) {
-      console.log("Updating label value to " + this.value)
-      console.log("current size: " + this.textObject.width + " " + this.textObject.height);
       // set value
       this.textObject.text = this.value;
-      console.log("current size: " + this.textObject.width + " " + this.textObject.height);
 
       // re-adjust absolute position
       var newPosition = this.hud.calculateAbsolutePosition(this.config.position,

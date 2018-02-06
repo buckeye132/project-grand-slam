@@ -101,9 +101,7 @@ class PlayerCharacterController {
     }
 
     // update character state
-    var timeDelta = this.game.phaserGame.time.physicsElapsed;
-    this.character.position.x += this.character.moveSpeed * timeDelta * moveX;
-    this.character.position.y += this.character.moveSpeed * timeDelta * moveY;
+    this.character.setMove(moveX, moveY);
 
     // perform child object update()
     this.character.update();
@@ -123,6 +121,7 @@ class PlayerCharacterController {
     }
 
     // broadcast our position
+    var timeDelta = this.game.phaserGame.time.physicsElapsed;
     this.nextPositionEventIn -= timeDelta*1000;
     if (this.nextPositionEventIn < 0) {
       this.nextPositionEventIn += POSITION_EVENT_INTERVAL;

@@ -112,20 +112,16 @@ class EnemyCharacterController {
       targetRange = this.desiredRange;
     }
 
-    // decide how far to move and in what direction
+    // decide direction to move
     var deltaX = targetPosition.x - this.character.position.x;
     var deltaY = targetPosition.y - this.character.position.y;
 
     var distance = this.character.distanceTo(targetPosition);
 
     if (distance > targetRange) {
-      deltaX = deltaX / distance;
-      deltaY = deltaY / distance;
-
-      // update character state
-      var timeDelta = this.game.phaserGame.time.physicsElapsed;
-      this.character.position.x += this.character.moveSpeed * timeDelta * deltaX;
-      this.character.position.y += this.character.moveSpeed * timeDelta * deltaY;
+      this.character.setMove(deltaX, deltaY);
+    } else {
+      this.character.setMove(0, 0);
     }
 
     // perform character update()

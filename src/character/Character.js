@@ -1,19 +1,18 @@
 class Character {
   constructor(x, y, game, spriteName, name, moveSpeed, maxHealth) {
-    this.position = {x: x, y: y};
     this.game = game;
     this.name = name;
 
     this.moveSpeed = moveSpeed;
     this.target = null;
 
-    this.spriteGroup = this.game.phaserGame.add.group();
     this.sprite = Character.createCharacterSprite(this.game, spriteName);
+    this.spriteGroup = game.phaserGame.add.group();
+    this.spriteGroup.add(this.sprite);
     this.highlightSprite = null;
 
-    this.spriteGroup.add(this.sprite);
-    this.spriteGroup.x = x;
-    this.spriteGroup.y = y;
+    this.sprite.x = x;
+    this.sprite.y = y;
 
     this.lastFacing = "down";
 
@@ -28,7 +27,9 @@ class Character {
     sprite.anchor.setTo(0.5, 0.5);
     sprite.inputEnabled = true;
 
-    game.phaserGame.physics.enable([ sprite ], game.physicsEngine);
+    //game.phaserGame.physics.enable([ sprite ], game.physicsEngine);
+    game.phaserGame.physics.enable(sprite);
+    sprite.body.collideWorldBounds = true
 
     return sprite;
   }
@@ -42,19 +43,33 @@ class Character {
       var sprite = phaserGame.add.sprite(0, 0);
       sprite.addChild(graphics);
 
-      phaserGame.physics.enable([ sprite ], physicsEngine);
-
       return sprite;
+  }
+
+  setMove(moveX, moveY) {
+    if (moveX == 0 && moveY == 0) {
+      this.sprite.body.velocity.x = 0;
+      this.sprite.body.velocity.y = 0;
+    } else {
+      var preScaleX = moveX * this.moveSpeed;
+      var preScaleY = moveY * this.moveSpeed;
+      var preScaleTotal = Math.sqrt(Math.pow(preScaleX, 2) + Math.pow(preScaleY, 2));
+      var factor = this.moveSpeed / preScaleTotal;
+      this.sprite.body.velocity.x = factor * preScaleX;
+      this.sprite.body.velocity.y = factor * preScaleY;
+    }
   }
 
   update() {
     var delta = {
-      x: this.position.x - this.spriteGroup.x,
-      y: this.position.y - this.spriteGroup.y
+      x: this.sprite.body.velocity.x,
+      y: this.sprite.body.velocity.y
     }
 
-    this.spriteGroup.x = this.position.x;
-    this.spriteGroup.y = this.position.y;
+    // check collisions with all map layers
+    for (var layer of this.game.mapLayers) {
+      this.game.phaserGame.physics.arcade.collide(this.sprite, layer);
+    }
 
     // animation and facing is based on movement direction by default
     var facing = this.lastFacing;
@@ -89,6 +104,11 @@ class Character {
 
     this.sprite.animations.play(movement + "_" + facing);
     this.lastFacing = facing;
+
+    if (this.highlightSprite) {
+      this.highlightSprite.x = this.sprite.x;
+      this.highlightSprite.y = this.sprite.y;
+    }
 
     this.combatText.update();
   }
@@ -153,6 +173,13 @@ class Character {
         this.target.position.y);
     }
     return distanceToTarget;
+  }
+
+  get position() {
+    return {
+      x: this.sprite.x,
+      y: this.sprite.y
+    };
   }
 
   distanceTo(position) {
