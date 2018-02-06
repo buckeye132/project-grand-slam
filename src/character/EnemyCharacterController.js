@@ -2,7 +2,7 @@ class EnemyCharacterController {
   constructor(x, y, config, game) {
     this.game = game;
     this.character = new Character(x, y, game, config.spriteName, config.name,
-      config.moveSpeed);
+      config.movementSpeed, config.maxHealth);
     this.desiredRange = config.desiredRange;
     this.agroRange = config.agroRange;
     this.chaseDistance = config.chaseDistance;
@@ -134,9 +134,7 @@ class EnemyCharacterController {
 
     // try attacking
     if (this.character.target) {
-      if (this.weapon.canHit(this.character.distanceToTarget)) {
-        this.weapon.attack(this.character.target);
-      }
+      this.weapon.attack(this.character.target, this.character.distanceToTarget);
     }
   }
 

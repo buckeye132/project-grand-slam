@@ -13,6 +13,7 @@ class GrandSlamGame {
     this.mapManager = new MapManager("assets/config/map_config.json", this);
     this.levelManager = new LevelManager("assets/config/test_level.json", this);
     this.skillManager = new SkillManager(["assets/config/skill_config.json"], this);
+    this.playerBuildManager = new PlayerBuildManager(["assets/config/player_config.json"], this)
 
     this.hud = new HUD("assets/config/hud_config.json", this);
 
@@ -22,10 +23,7 @@ class GrandSlamGame {
   /* PHASER GAME STATES */
   preload() {
     this.spriteManager.preload();
-    this.weaponManager.preload();
-    this.enemyManager.preload();
     this.mapManager.preload();
-    this.skillManager.preload();
   }
 
   create() {
@@ -43,9 +41,10 @@ class GrandSlamGame {
     // player character
     var playerSpawn = this.levelManager.getNextPlayerSpawnPosition();
     console.log("spawning player at " + playerSpawn.x, + " " + playerSpawn.y);
-    this.playerCharacter = new Character(playerSpawn.x, playerSpawn.y, this, "char1", "Player");
-    this.controllers.push(new PlayerCharacterController(
-      this.playerCharacter, this));
+    var playerController = this.playerBuildManager.createPlayer(
+      playerSpawn.x, playerSpawn.y, "default");
+    this.playerCharacter = playerController.character;
+    this.controllers.push(playerController);
     this.setCameraFollow(this.playerCharacter.sprite);
 
     // enemy characters

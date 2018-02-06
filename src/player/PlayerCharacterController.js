@@ -6,15 +6,14 @@ const CHARACTER_KEY_BINDINGS = new Map(
   ["CANCEL", Phaser.KeyCode.ESC]]);
 const CHARACTER_KEY_CAPTURES = [Phaser.KeyCode.ESC];
 const POSITION_EVENT_INTERVAL = 500; // half second between events
-const DEFAULT_WEAPON = "basic_sword";
-const DEFAULT_SKILLS = ["test_skill"];
 
 class PlayerCharacterController {
-  constructor(character, game) {
-    this.character = character;
+  constructor(x, y, buildConfig, game) {
     this.game = game;
-
     this.nextPositionEventIn = 0;
+
+    this.character = new Character(x, y, this.game, buildConfig.spriteName,
+      "Player", buildConfig.moveSpeed, buildConfig.maxHealth);
 
     // initialize keyboard input
     for (var keyCapture of CHARACTER_KEY_CAPTURES) {
@@ -30,13 +29,13 @@ class PlayerCharacterController {
     this.game.eventBus.subscribe("enemy_click", this.enemyClickListener, this);
 
     // equip a basic melee weapon
-    this.weapon = this.game.weaponManager.createWeapon(DEFAULT_WEAPON);
+    this.weapon = this.game.weaponManager.createWeapon(buildConfig.weapon);
     this.autoAttacking = false;
 
     // equip skills
     this.skills = [];
-    for (var i = 0; i < DEFAULT_SKILLS.length; i++) {
-      var skill = this.game.skillManager.createSkill(DEFAULT_SKILLS[i]);
+    for (var i = 0; i < buildConfig.skills.length; i++) {
+      var skill = this.game.skillManager.createSkill(buildConfig.skills[i]);
       skill.publishIcon("set_skill_" + i.toString());
       this.skills.push(skill);
       this.game.eventBus.subscribe("skill_" + i.toString() + "_click",
@@ -65,7 +64,7 @@ class PlayerCharacterController {
         this.character.target &&
         !this.character.target.isDead) {
       var skill = this.skills[data.payload.slotNumber];
-      skill.useOn(this.character.target);
+      skill.useOn(this.character.target, this.character.distanceToTarget);
     }
   }
 
@@ -116,7 +115,7 @@ class PlayerCharacterController {
     // check auto attack
     if (this.character.target && this.autoAttacking) {
       if (this.weapon.canHit(this.character.distanceToTarget)) {
-        this.weapon.attack(this.character.target);
+        this.weapon.attack(this.character.target, this.character.distanceToTarget);
       } else {
         // if we're out of range, cancel auto attack
         this.autoAttacking = false;

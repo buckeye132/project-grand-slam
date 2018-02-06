@@ -7,7 +7,8 @@
       "movementSpeed": 50,
       "desiredRange": 90,
       "agroRange": 300,
-      "chaseDistance": 500
+      "chaseDistance": 500,
+      "maxHealth": 100
     },
     {
       "name": "baddie2",
@@ -16,7 +17,8 @@
       "movementSpeed": 50,
       "desiredRange": 90,
       "agroRange": 300,
-      "chaseDistance": 500
+      "chaseDistance": 500,
+      "maxHealth": 100
     },
     {
       "name": "baddie3",
@@ -25,7 +27,8 @@
       "movementSpeed": 50,
       "desiredRange": 90,
       "agroRange": 300,
-      "chaseDistance": 500
+      "chaseDistance": 500,
+      "maxHealth": 100
     }
   ]
 }

@@ -12,10 +12,6 @@ class SkillManager {
     }
   }
 
-  preload() {
-
-  }
-
   createSkill(name) {
     var skillConfig = this.skillConfigMap.get(name);
     if (!skillConfig) {

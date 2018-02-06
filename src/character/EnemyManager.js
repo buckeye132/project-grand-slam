@@ -12,10 +12,6 @@ class EnemyManager {
     }
   }
 
-  preload() {
-
-  }
-
   createEnemy(type, x, y) {
     var enemyTypeConfig = this.enemyTypeConfigMap.get(type);
     if (!enemyTypeConfig) {

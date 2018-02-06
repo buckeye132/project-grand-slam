@@ -12,10 +12,6 @@ class WeaponManager {
     }
   }
 
-  preload() {
-
-  }
-
   createWeapon(name) {
     var weaponConfig = this.weaponConfigMap.get(name);
     if (!weaponConfig) {

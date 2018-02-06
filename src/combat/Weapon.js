@@ -15,9 +15,9 @@ class Weapon {
     return range >= this.range.min && range <= this.range.max;
   }
 
-  attack(character) {
+  attack(character, range) {
     if (!character.isDead) {
-      if (this.cooldownReady) {
+      if (this.cooldownReady && this.canHit(range)) {
         character.applyDamage(this.damagePerHit);
         this.attackCooldownRemaining = this.attackCooldown;
       }

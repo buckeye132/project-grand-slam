@@ -1,7 +1,5 @@
-DEFAULT_MAX_HEALTH = 100;
-
 class Character {
-  constructor(x, y, game, spriteName, name, moveSpeed = 100) {
+  constructor(x, y, game, spriteName, name, moveSpeed, maxHealth) {
     this.position = {x: x, y: y};
     this.game = game;
     this.name = name;
@@ -19,8 +17,8 @@ class Character {
 
     this.lastFacing = "down";
 
-    this.health = DEFAULT_MAX_HEALTH;
-    this.maxHealth = DEFAULT_MAX_HEALTH;
+    this.health = maxHealth;
+    this.maxHealth = maxHealth;
 
     this.combatText = new CombatText(this.game, this);
   }
@@ -96,6 +94,7 @@ class Character {
   }
 
   destroy() {
+    console.log("destroy");
     if (this.sprite) {
       this.sprite.destroy();
       delete this.sprite;
