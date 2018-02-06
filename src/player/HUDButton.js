@@ -64,7 +64,13 @@ class HUDButton {
   clickHandler(gameObject, pointer) {
     if (this.config.destination.type === "event_bus") {
       this.game.eventBus.publish(this.config.destination.eventName,
-        {pointer: pointer, eventName: this.config.destination.eventName});
+        {
+          pointer: pointer,
+          eventName: this.config.destination.eventName,
+          payload: this.config.destination.payload
+        });
+    } else {
+      console.error("Unrecognized destination type: " + this.config.destination.type);
     }
   }
 }

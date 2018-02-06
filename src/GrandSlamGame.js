@@ -12,6 +12,7 @@ class GrandSlamGame {
     this.enemyManager = new EnemyManager(["assets/config/enemy_config.json"], this);
     this.mapManager = new MapManager("assets/config/map_config.json", this);
     this.levelManager = new LevelManager("assets/config/test_level.json", this);
+    this.skillManager = new SkillManager(["assets/config/skill_config.json"], this);
 
     this.hud = new HUD("assets/config/hud_config.json", this);
 
@@ -24,6 +25,7 @@ class GrandSlamGame {
     this.weaponManager.preload();
     this.enemyManager.preload();
     this.mapManager.preload();
+    this.skillManager.preload();
   }
 
   create() {

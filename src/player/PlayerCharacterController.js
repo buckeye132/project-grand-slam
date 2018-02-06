@@ -7,6 +7,7 @@ const CHARACTER_KEY_BINDINGS = new Map(
 const CHARACTER_KEY_CAPTURES = [Phaser.KeyCode.ESC];
 const POSITION_EVENT_INTERVAL = 500; // half second between events
 const DEFAULT_WEAPON = "basic_sword";
+const DEFAULT_SKILLS = ["test_skill"];
 
 class PlayerCharacterController {
   constructor(character, game) {
@@ -33,12 +34,19 @@ class PlayerCharacterController {
     this.autoAttacking = false;
 
     // equip skills
-    this.game.eventBus.publish("set_skill_1",
-      {newSkill: {spriteName: "skill_icons", frame: 0}});
-    this.game.eventBus.subscribe("skill_1_click", this.skillClickListener, this);
+    this.skills = [];
+    for (var i = 0; i < DEFAULT_SKILLS.length; i++) {
+      var skill = this.game.skillManager.createSkill(DEFAULT_SKILLS[i]);
+      skill.publishIcon("set_skill_" + i.toString());
+      this.skills.push(skill);
+      this.game.eventBus.subscribe("skill_" + i.toString() + "_click",
+        this.skillClickListener, this);
+    }
   }
 
   enemyClickListener(data) {
+    if (this.character.isDead) return;
+
     if (!data.enemyController) {
       this.character.target = null;
       this.autoAttacking = false;
@@ -51,7 +59,14 @@ class PlayerCharacterController {
   }
 
   skillClickListener(data) {
-    console.log("Skill clicked: " + data.eventName);
+    if (this.character.isDead) return;
+
+    if (data.pointer.leftButton.isDown &&
+        this.character.target &&
+        !this.character.target.isDead) {
+      var skill = this.skills[data.payload.slotNumber];
+      skill.useOn(this.character.target);
+    }
   }
 
   update() {
@@ -94,6 +109,9 @@ class PlayerCharacterController {
     // perform child object update()
     this.character.update();
     this.weapon.update();
+    for (var skill of this.skills) {
+      skill.update();
+    }
 
     // check auto attack
     if (this.character.target && this.autoAttacking) {
@@ -127,6 +145,10 @@ class PlayerCharacterController {
   destroy() {
     this.character.destroy();
     this.game.eventBus.unsubscribe("enemy_click", this.enemyClickListener, this);
+    for (var i = 0; i < this.skills.length; i++) {
+      this.game.eventBus.unsubscribe("skill_" + i.toString() + "_click",
+        this.enemyClickListener, this);
+    }
   }
 
   get isDestroyed() {

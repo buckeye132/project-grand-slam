@@ -62,12 +62,15 @@
       "type": "button",
       "source": {
         "type": "event_bus",
-        "eventName": "set_skill_1",
+        "eventName": "set_skill_0",
         "dataField": "newSkill"
       },
       "destination": {
         "type": "event_bus",
-        "eventName": "skill_1_click"
+        "eventName": "skill_0_click",
+        "payload": {
+          "slotNumber": 0
+        }
       },
       "position": {
         "x": 100,

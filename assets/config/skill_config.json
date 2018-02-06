@@ -1,0 +1,17 @@
+{
+  "skills": [
+    {
+      "name": "test_skill",
+      "icon": {
+        "spriteName": "skill_icons",
+        "frame": 0
+      },
+      "damagePerHit": 40,
+      "cooldown": 10000,
+      "range": {
+        "min": 0,
+        "max": 100
+      }
+    }
+  ]
+}
