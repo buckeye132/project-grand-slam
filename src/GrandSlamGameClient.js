@@ -1,21 +1,27 @@
-class GrandSlamGame {
-  constructor(targetElement) {
+class GrandSlamGameClient {
+  constructor(playerId, gameId) {
+    this.gameId = gameId;
+    this.playerId = playerId;
+
     this.physicsEngine = Phaser.Physics.ARCADE;
     this.controllers = [];
     this.playerCharacter = null;
     this.enemyCharacters = [];
+    this.remotePlayers = {};
 
-    this.eventBus = new EventBus();
+    this.eventBus = new EventBus(this.gameId, this.playerId);
 
-    this.spriteManager = new SpriteManager("assets/config/sprite_config.json", this);
-    this.weaponManager = new WeaponManager(["assets/config/weapon_config.json"], this);
-    this.enemyManager = new EnemyManager(["assets/config/enemy_config.json"], this);
-    this.mapManager = new MapManager("assets/config/map_config.json", this);
-    this.levelManager = new LevelManager("assets/config/test_level.json", this);
-    this.skillManager = new SkillManager(["assets/config/skill_config.json"], this);
-    this.playerBuildManager = new PlayerBuildManager(["assets/config/player_config.json"], this)
+    this.spriteManager = new SpriteManager("/assets/config/sprite_config.json", this);
+    this.weaponManager = new WeaponManager(["/assets/config/weapon_config.json"], this);
+    this.enemyManager = new EnemyManager(["/assets/config/enemy_config.json"], this);
+    this.mapManager = new MapManager("/assets/config/map_config.json", this);
+    this.levelManager = new LevelManager("/assets/config/test_level.json", this);
+    this.skillManager = new SkillManager(["/assets/config/skill_config.json"], this);
+    this.playerBuildManager = new PlayerBuildManager(["/assets/config/player_config.json"], this)
 
-    this.hud = new HUD("assets/config/hud_config.json", this);
+    this.remotePlayerManager = new RemotePlayerManager(this, this.playerId);
+
+    this.hud = new HUD("/assets/config/hud_config.json", this);
 
     this.phaserGame = null; // set by main.js
   }
@@ -28,6 +34,7 @@ class GrandSlamGame {
 
   create() {
     // game setup
+    this.phaserGame.stage.disableVisibilityChange = true;
     this.phaserGame.time.advancedTiming = true;
     this.phaserGame.input.mouse.capture = true;
     this.phaserGame.canvas.oncontextmenu = function (e) { e.preventDefault(); };
@@ -43,7 +50,7 @@ class GrandSlamGame {
     var playerSpawn = this.levelManager.getNextPlayerSpawnPosition();
     console.log("spawning player at " + playerSpawn.x, + " " + playerSpawn.y);
     var playerController = this.playerBuildManager.createPlayer(
-      playerSpawn.x, playerSpawn.y, "default");
+      playerSpawn.x, playerSpawn.y, "default", this.playerId);
     this.playerCharacter = playerController.character;
     this.controllers.push(playerController);
     this.setCameraFollow(this.playerCharacter.sprite);
@@ -78,6 +85,8 @@ class GrandSlamGame {
         this.playerCharacter = null;
       }
     }
+
+    this.remotePlayerManager.update();
 
     this.hud.update();
   }

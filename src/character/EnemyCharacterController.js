@@ -20,7 +20,7 @@ class EnemyCharacterController {
     this.game.eventBus.subscribe("enemy_click", this.enemyClickListener, this);
 
     // listen for players to broadcast their position
-    this.game.eventBus.subscribe("player_position", this.playerPositionListener, this);
+    this.game.eventBus.subscribe("player_status", this.playerStatusListener, this);
   }
 
   /* Input Callbacks */
@@ -45,7 +45,7 @@ class EnemyCharacterController {
     }
   }
 
-  playerPositionListener(data) {
+  playerStatusListener(data) {
     if (this.isDestroyed) {
       return;
     }

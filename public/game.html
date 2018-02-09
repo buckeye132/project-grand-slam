@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="/js/phaser.min.js"></script>
+    <script type="text/javascript" src="/js/EventEmitter.min.js"></script>
+    <title>Project Grand Slam</title>
+</head>
+<body style="margin: 0px">
+  <div id="game">
+  </div>
+  <!-- util -->
+  <script type="text/javascript" src="/src/util/EventBus.js"></script>
+  <script type="text/javascript" src="/src/util/JSONConfigLoader.js"></script>
+  <script type="text/javascript" src="/src/util/SpriteManager.js"></script>
+
+  <!-- character -->
+  <script type="text/javascript" src="/src/character/Character.js"></script>
+  <script type="text/javascript" src="/src/character/EnemyCharacterController.js"></script>
+  <script type="text/javascript" src="/src/character/EnemyManager.js"></script>
+
+  <!-- combat -->
+  <script type="text/javascript" src="/src/combat/Weapon.js"></script>
+  <script type="text/javascript" src="/src/combat/WeaponManager.js"></script>
+  <script type="text/javascript" src="/src/combat/Skill.js"></script>
+  <script type="text/javascript" src="/src/combat/SkillManager.js"></script>
+  <script type="text/javascript" src="/src/combat/CombatText.js"></script>
+
+  <!-- player -->
+  <script type="text/javascript" src="/src/player/HUD.js"></script>
+  <script type="text/javascript" src="/src/player/HUDStatusBar.js"></script>
+  <script type="text/javascript" src="/src/player/HUDLabel.js"></script>
+  <script type="text/javascript" src="/src/player/HUDButton.js"></script>
+  <script type="text/javascript" src="/src/player/PlayerBuildManager.js"></script>
+  <script type="text/javascript" src="/src/player/PlayerCharacterController.js"></script>
+  <script type="text/javascript" src="/src/player/RemotePlayerCharacterController.js"></script>
+  <script type="text/javascript" src="/src/player/RemotePlayerManager.js"></script>
+
+  <!-- level -->
+  <script type="text/javascript" src="/src/level/MapManager.js"></script>
+  <script type="text/javascript" src="/src/level/LevelManager.js"></script>
+
+  <!-- game -->
+  <script type="text/javascript" src="/src/GrandSlamGameClient.js"></script>
+
+  <!-- main -->
+  <script type="text/javascript" src="/js/utilities.js"></script>
+  <script type="text/javascript" src="/js/game.js"></script>
+
+</body>
+</html>

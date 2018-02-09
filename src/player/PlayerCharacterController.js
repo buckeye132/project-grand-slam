@@ -5,15 +5,17 @@ const CHARACTER_KEY_BINDINGS = new Map(
   ["MOVE_RIGHT", Phaser.KeyCode.D],
   ["CANCEL", Phaser.KeyCode.ESC]]);
 const CHARACTER_KEY_CAPTURES = [Phaser.KeyCode.ESC];
-const POSITION_EVENT_INTERVAL = 500; // half second between events
+const POSITION_EVENT_INTERVAL = 1000 / 30; // 30 / sec
 
 class PlayerCharacterController {
-  constructor(x, y, buildConfig, game) {
+  constructor(x, y, buildConfig, game, playerId) {
     this.game = game;
+    this.playerId = playerId;
     this.nextPositionEventIn = 0;
+    this.buildConfig = buildConfig;
 
     this.character = new Character(x, y, this.game, buildConfig.spriteName,
-      "Player", buildConfig.moveSpeed, buildConfig.maxHealth);
+      playerId, buildConfig.moveSpeed, buildConfig.maxHealth);
 
     // initialize keyboard input
     for (var keyCapture of CHARACTER_KEY_CAPTURES) {
@@ -125,19 +127,24 @@ class PlayerCharacterController {
     this.nextPositionEventIn -= timeDelta*1000;
     if (this.nextPositionEventIn < 0) {
       this.nextPositionEventIn += POSITION_EVENT_INTERVAL;
-      this.game.eventBus.publish("player_position",
-        {playerController: this, position: this.character.position});
-    }
 
-    // broadcast our status
-    var status = {};
-    status.healthPercent = (this.character.health / this.character.maxHealth);
-    if (this.character.target) {
-      status.targetHealthPercent =
-        (this.character.target.health / this.character.target.maxHealth);
-      status.targetName = this.character.target.name;
+      var networkStatus = {};
+      networkStatus.healthPercent = (this.character.health / this.character.maxHealth);
+      networkStatus.health = this.character.health;
+      networkStatus.position = Object.assign({}, this.character.position);
+      networkStatus.playerId = this.playerId;
+      networkStatus.buildConfig = this.buildConfig;
+      this.game.eventBus.publishNetwork("player_status", networkStatus)
+
+      var localStatus = Object.assign({}, networkStatus);
+      if (this.character.target) {
+        localStatus.targetHealthPercent =
+          (this.character.target.health / this.character.target.maxHealth);
+        localStatus.targetName = this.character.target.name;
+      }
+      localStatus.playerController = this;
+      this.game.eventBus.publish("player_status", localStatus);
     }
-    this.game.eventBus.publish("player_status", status);
   }
 
   destroy() {

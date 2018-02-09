@@ -3,7 +3,7 @@
     {
       "type": "animated",
       "name": "baddie1",
-      "assetPath": "assets/sprites/baddie1.png",
+      "assetPath": "/assets/sprites/baddie1.png",
       "spriteSheetProperties": {
         "frameWidth": 96,
         "frameHeight": 96,
@@ -63,7 +63,7 @@
     {
       "type": "animated",
       "name": "baddie2",
-      "assetPath": "assets/sprites/baddie2.png",
+      "assetPath": "/assets/sprites/baddie2.png",
       "spriteSheetProperties": {
         "frameWidth": 96,
         "frameHeight": 96,
@@ -123,7 +123,7 @@
     {
       "type": "animated",
       "name": "baddie3",
-      "assetPath": "assets/sprites/baddie3.png",
+      "assetPath": "/assets/sprites/baddie3.png",
       "spriteSheetProperties": {
         "frameWidth": 96,
         "frameHeight": 96,
@@ -183,7 +183,7 @@
     {
       "type": "animated",
       "name": "char1",
-      "assetPath": "assets/sprites/char1.png",
+      "assetPath": "/assets/sprites/char1.png",
       "spriteSheetProperties": {
         "frameWidth": 96,
         "frameHeight": 96,
@@ -243,7 +243,7 @@
     {
       "type": "animated",
       "name": "char2",
-      "assetPath": "assets/sprites/char2.png",
+      "assetPath": "/assets/sprites/char2.png",
       "spriteSheetProperties": {
         "frameWidth": 96,
         "frameHeight": 96,
@@ -303,7 +303,7 @@
     {
       "type": "sheet",
       "name": "skill_icons",
-      "assetPath": "assets/sprites/skill_icons.png",
+      "assetPath": "/assets/sprites/skill_icons.png",
       "spriteSheetProperties": {
         "frameWidth": 66,
         "frameHeight": 66,

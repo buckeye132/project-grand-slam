@@ -13,6 +13,8 @@ class Character {
 
     this.sprite.x = x;
     this.sprite.y = y;
+    this.previousPosition = {x: 0, y: 0};
+    this.usingVelocity = false;
 
     this.lastFacing = "down";
 
@@ -47,6 +49,7 @@ class Character {
   }
 
   setMove(moveX, moveY) {
+    this.usingVelocity = true;
     if (moveX == 0 && moveY == 0) {
       this.sprite.body.velocity.x = 0;
       this.sprite.body.velocity.y = 0;
@@ -60,11 +63,35 @@ class Character {
     }
   }
 
+  get position() {
+    return {
+      x: this.sprite.x,
+      y: this.sprite.y
+    };
+  }
+
+  set position(position) {
+    this.usingVelocity = false;
+    this.previousPosition.x = this.sprite.x;
+    this.previousPosition.y = this.sprite.y;
+    this.sprite.x = position.x;
+    this.sprite.y = position.y;
+  }
+
   update() {
-    var delta = {
-      x: this.sprite.body.velocity.x,
-      y: this.sprite.body.velocity.y
+    var delta = null
+    if (this.usingVelocity) {
+      delta = {
+        x: this.sprite.body.velocity.x,
+        y: this.sprite.body.velocity.y
+      }
+    } else {
+      delta = {
+        x: this.sprite.x - this.previousPosition.x,
+        y: this.sprite.y - this.previousPosition.y
+      }
     }
+
 
     // check collisions with all map layers
     for (var layer of this.game.mapLayers) {
@@ -173,13 +200,6 @@ class Character {
         this.target.position.y);
     }
     return distanceToTarget;
-  }
-
-  get position() {
-    return {
-      x: this.sprite.x,
-      y: this.sprite.y
-    };
   }
 
   distanceTo(position) {

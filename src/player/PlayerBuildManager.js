@@ -12,13 +12,13 @@ class PlayerBuildManager {
     }
   }
 
-  createPlayer(x, y, buildName) {
+  createPlayer(x, y, buildName, playerId) {
     var buildConfig = this.playerBuildMap.get(buildName);
     if (!buildConfig) {
       console.error("Tried to player with build that isn't defined: ", buildName);
       return null;
     }
 
-    return new PlayerCharacterController(x, y, buildConfig, this.game);
+    return new PlayerCharacterController(x, y, buildConfig, this.game, playerId);
   }
 }
