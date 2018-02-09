@@ -14,9 +14,10 @@ class Character {
     this.sprite.x = x;
     this.sprite.y = y;
     this.previousPosition = {x: 0, y: 0};
-    this.usingVelocity = false;
 
+    this.currentAnimation = "idle_down";
     this.lastFacing = "down";
+    this.animationOverride = null;
 
     this.health = maxHealth;
     this.maxHealth = maxHealth;
@@ -49,7 +50,6 @@ class Character {
   }
 
   setMove(moveX, moveY) {
-    this.usingVelocity = true;
     if (moveX == 0 && moveY == 0) {
       this.sprite.body.velocity.x = 0;
       this.sprite.body.velocity.y = 0;
@@ -71,7 +71,6 @@ class Character {
   }
 
   set position(position) {
-    this.usingVelocity = false;
     this.previousPosition.x = this.sprite.x;
     this.previousPosition.y = this.sprite.y;
     this.sprite.x = position.x;
@@ -80,57 +79,57 @@ class Character {
 
   update() {
     var delta = null
-    if (this.usingVelocity) {
+    if (!this.animationOverride) {
       delta = {
         x: this.sprite.body.velocity.x,
         y: this.sprite.body.velocity.y
       }
-    } else {
-      delta = {
-        x: this.sprite.x - this.previousPosition.x,
-        y: this.sprite.y - this.previousPosition.y
-      }
     }
-
 
     // check collisions with all map layers
     for (var layer of this.game.mapLayers) {
       this.game.phaserGame.physics.arcade.collide(this.sprite, layer);
     }
 
-    // animation and facing is based on movement direction by default
-    var facing = this.lastFacing;
-    var movement = "idle";
-    if (Math.abs(delta.x) > 0 || Math.abs(delta.y) > 0) {
-      movement = "walk";
+    if (!this.animationOverride) {
+      // animation and facing is based on movement direction by default
+      var facing = this.lastFacing;
+      var movement = "idle";
+      if (Math.abs(delta.x) > 0 || Math.abs(delta.y) > 0) {
+        movement = "walk";
 
-      if (Math.abs(delta.x) > Math.abs(delta.y)) {
-        if (delta.x > 0) facing = "right";
-        else facing = "left";
-      } else {
-        if (delta.y > 0) facing = "down";
-        else facing = "up";
+        if (Math.abs(delta.x) > Math.abs(delta.y)) {
+          if (delta.x > 0) facing = "right";
+          else facing = "left";
+        } else {
+          if (delta.y > 0) facing = "down";
+          else facing = "up";
+        }
       }
+
+      // if the character is targeting something, override facing
+      if (this.target) {
+        var deltaToTarget = {
+          x: this.target.position.x - this.position.x,
+          y: this.target.position.y - this.position.y
+        }
+
+        if (Math.abs(deltaToTarget.x) > Math.abs(deltaToTarget.y)) {
+          if (deltaToTarget.x > 0) facing = "right";
+          else facing = "left";
+        } else {
+          if (deltaToTarget.y > 0) facing = "down";
+          else facing = "up";
+        }
+      }
+
+      this.lastFacing = facing;
+      this.currentAnimation = movement + "_" + facing;
+    } else {
+      this.currentAnimation = this.animationOverride;
     }
 
-    // if the character is targeting something, override facing
-    if (this.target) {
-      var deltaToTarget = {
-        x: this.target.position.x - this.position.x,
-        y: this.target.position.y - this.position.y
-      }
-
-      if (Math.abs(deltaToTarget.x) > Math.abs(deltaToTarget.y)) {
-        if (deltaToTarget.x > 0) facing = "right";
-        else facing = "left";
-      } else {
-        if (deltaToTarget.y > 0) facing = "down";
-        else facing = "up";
-      }
-    }
-
-    this.sprite.animations.play(movement + "_" + facing);
-    this.lastFacing = facing;
+    this.sprite.animations.play(this.currentAnimation);
 
     if (this.highlightSprite) {
       this.highlightSprite.x = this.sprite.x;

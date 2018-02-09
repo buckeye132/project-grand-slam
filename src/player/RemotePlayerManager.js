@@ -28,6 +28,7 @@ class RemotePlayerManager {
   }
 
   playerListHandler(data) {
+    console.log("player list: " + JSON.stringify(data));
     var playersToRemove = [];
     for (var playerId of this.remotePlayers.keys()) {
       if (!data.playerIds.includes(playerId)) {

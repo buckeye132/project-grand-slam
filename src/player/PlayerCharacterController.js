@@ -134,6 +134,7 @@ class PlayerCharacterController {
       networkStatus.position = Object.assign({}, this.character.position);
       networkStatus.playerId = this.playerId;
       networkStatus.buildConfig = this.buildConfig;
+      networkStatus.currentAnimation = this.character.currentAnimation;
       this.game.eventBus.publishNetwork("player_status", networkStatus)
 
       var localStatus = Object.assign({}, networkStatus);

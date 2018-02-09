@@ -15,8 +15,6 @@ class GrandSlameGameServer {
     this.eventServer.subscribePlayerJoin(this.playerJoin, this);
 
     this.eventServer.subscribe("player_status", this.playerStatus, this);
-
-    this.playerList = [];
   }
 
   playerLeave(data) {

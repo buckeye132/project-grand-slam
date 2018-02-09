@@ -71,7 +71,7 @@ class EventServer {
   }
 
   get playerList() {
-    return this.playerSockets.keys();
+    return Array.from( this.playerSockets.keys() );
   }
 }
 

@@ -21,6 +21,7 @@ class RemotePlayerCharacterController {
       } else {
           this.character.position = data.position;
       }
+      this.character.animationOverride = data.currentAnimation;
     }
   }
 
