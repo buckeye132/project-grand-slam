@@ -24,6 +24,7 @@ class EnemyCharacterController {
   }
 
   /* Input Callbacks */
+  // this needs to move into the character class..
   clickCallback(gameObject, pointer) {
     if (this.isDestroyed) {
       return;

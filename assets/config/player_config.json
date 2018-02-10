@@ -1,14 +1,16 @@
 {
-  "playerBuilds": [
-    {
+  "playerBuilds": {
+    "default": {
       "name": "default",
-      "moveSpeed": 150,
       "weapon": "basic_sword",
       "skills": [
         "test_skill"
       ],
-      "maxHealth": 100,
-      "spriteName": "char1"
+      "characterConfig": {
+        "maxHealth": 100,
+        "spriteName": "char1",
+        "moveSpeed": 150
+      }
     }
-  ]
+  }
 }

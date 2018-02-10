@@ -1,22 +1,34 @@
-if (typeof window === 'undefined') {
-  var EventServer = require('./util/EventServer');
-}
+const ServerClassFactory = require('./util/ServerClassFactory');
 
 const SERVER_TIMEOUT = 10000; // temp - 10 seconds
+const TICK_TIME = 1000 / 60 // 60 TICK / SEC
 
-class GrandSlameGameServer {
+class GrandSlamGameServer {
   constructor(gameId, io) {
     console.log("Game Server Starting: ", gameId);
+    this.gameId = gameId;
     this.becameEmptyAt = 0;
 
-    this.eventServer = new EventServer(gameId, io);
+    this.factory = new ServerClassFactory();
 
+    // create local and network event bus
+    this.eventServer = new this.factory.EventServer(this, io);
+    this.eventBus = new this.factory.EventBus(this);
+
+    // create child game objects
+    this.levelManager = new this.factory.LevelManager(
+      "assets/config/test_level.json", this);
+    this.characterManager = new this.factory.CharacterManager(this, false);
+
+    // subscribe event listeners
     this.eventServer.subscribePlayerLeave(this.playerLeave, this);
-    this.eventServer.subscribePlayerJoin(this.playerJoin, this);
+    this.characterManager.enableEvents();
 
-    this.eventServer.subscribe("player_status", this.playerStatus, this);
+    // set game loop interval
+    setInterval(this.update.bind(this), TICK_TIME);
   }
 
+  /* Event Handlers */
   playerLeave(data) {
     this.eventServer.broadcast("player_list",
       {playerIds: this.eventServer.playerList});
@@ -25,16 +37,12 @@ class GrandSlameGameServer {
     }
   }
 
-  playerJoin(data) {
-    this.eventServer.broadcast("player_list",
-      {playerIds: this.eventServer.playerList});
+  /* Game Loop*/
+  update() {
+    this.characterManager.update();
   }
 
-  playerStatus(data) {
-    // TODO - aggregate and send single broadcast for all players
-    this.eventServer.broadcast("player_status", data.data);
-  }
-
+  /* Public Interface */
   get hasTimeoutExpired() {
     return this.eventServer.playerCount == 0 &&
       (this.becameEmptyAt + SERVER_TIMEOUT <= new Date().getTime());
@@ -43,5 +51,5 @@ class GrandSlameGameServer {
 }
 
 if (typeof window === 'undefined') {
-  module.exports = GrandSlameGameServer;
+  module.exports = GrandSlamGameServer;
 }

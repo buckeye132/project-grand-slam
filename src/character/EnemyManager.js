@@ -4,7 +4,8 @@ class EnemyManager {
     this.enemyTypeConfigMap = new Map();
 
     for (var configFilePath of configFilePaths) {
-      var config = JSONConfigLoader.LoadJson(configFilePath);
+      var config = game.factory.JSONConfigLoader.LoadJson(configFilePath,
+        game.factory.fs);
 
       for (var enemyTypeConfig of config.enemyTypes) {
         this.enemyTypeConfigMap.set(enemyTypeConfig.name, enemyTypeConfig);
@@ -19,6 +20,7 @@ class EnemyManager {
       return null;
     }
 
-    return new EnemyCharacterController(x, y, enemyTypeConfig, this.game);
+    return new this.game.factory.EnemyCharacterController(x, y, enemyTypeConfig,
+      this.game);
   }
 }

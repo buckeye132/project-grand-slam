@@ -4,7 +4,7 @@
       "type": "status_bar",
       "source": {
         "type": "event_bus",
-        "eventName": "player_status",
+        "eventName": "hud_status",
         "dataField": "healthPercent"
       },
       "orientation": "vertical",
@@ -26,7 +26,7 @@
       "type": "status_bar",
       "source": {
         "type": "event_bus",
-        "eventName": "player_status",
+        "eventName": "hud_status",
         "dataField": "targetHealthPercent"
       },
       "orientation": "horizontal",
@@ -48,7 +48,7 @@
       "type": "label",
       "source": {
         "type": "event_bus",
-        "eventName": "player_status",
+        "eventName": "hud_status",
         "dataField": "targetName"
       },
       "position": {

@@ -3,23 +3,31 @@ class GrandSlamGameClient {
     this.gameId = gameId;
     this.playerId = playerId;
 
+    this.factory = new ClientClassFactory();
+
     this.physicsEngine = Phaser.Physics.ARCADE;
     this.controllers = [];
     this.playerCharacter = null;
     this.enemyCharacters = [];
     this.remotePlayers = {};
 
-    this.eventBus = new EventBus(this.gameId, this.playerId);
+    this.eventBus = new this.factory.EventBus(this, this.playerId);
 
-    this.spriteManager = new SpriteManager("/assets/config/sprite_config.json", this);
-    this.weaponManager = new WeaponManager(["/assets/config/weapon_config.json"], this);
-    this.enemyManager = new EnemyManager(["/assets/config/enemy_config.json"], this);
-    this.mapManager = new MapManager("/assets/config/map_config.json", this);
-    this.levelManager = new LevelManager("/assets/config/test_level.json", this);
-    this.skillManager = new SkillManager(["/assets/config/skill_config.json"], this);
-    this.playerBuildManager = new PlayerBuildManager(["/assets/config/player_config.json"], this)
+    this.spriteManager = new this.factory.SpriteManager(
+      "/assets/config/sprite_config.json", this);
+    this.weaponManager = new this.factory.WeaponManager(
+      ["/assets/config/weapon_config.json"], this);
+    //this.enemyManager = new EnemyManager(["/assets/config/enemy_config.json"], this);
+    this.mapManager = new this.factory.MapManager(
+      "/assets/config/map_config.json", this);
+    this.levelManager = new this.factory.LevelManager(
+      "/assets/config/test_level.json", this);
+    this.skillManager = new this.factory.SkillManager(
+      ["/assets/config/skill_config.json"], this);
+    //this.playerBuildManager = new PlayerBuildManager(["/assets/config/player_config.json"], this)
 
-    this.remotePlayerManager = new RemotePlayerManager(this, this.playerId);
+    this.characterManager = new this.factory.CharacterManager(this, true);
+    //this.remotePlayerManager = new RemotePlayerManager(this, this.playerId);
 
     this.hud = new HUD("/assets/config/hud_config.json", this);
 
@@ -47,24 +55,27 @@ class GrandSlamGameClient {
     this.hud.createHud();
 
     // player character
-    var playerSpawn = this.levelManager.getNextPlayerSpawnPosition();
+    /*var playerSpawn = this.levelManager.getNextPlayerSpawnPosition();
     console.log("spawning player at " + playerSpawn.x, + " " + playerSpawn.y);
     var playerController = this.playerBuildManager.createPlayer(
       playerSpawn.x, playerSpawn.y, "default", this.playerId);
     this.playerCharacter = playerController.character;
     this.controllers.push(playerController);
-    this.setCameraFollow(this.playerCharacter.sprite);
+    this.setCameraFollow(this.playerCharacter.sprite);*/
 
     // enemy characters
-    var enemyControllers = this.levelManager.createEnemies();
+    /*var enemyControllers = this.levelManager.createEnemies();
     for (var enemyController of enemyControllers) {
       this.controllers.push(enemyController);
-    }
+    }*/
+
+    this.characterManager.enableEvents();
+    this.characterManager.requestSpawnPlayer();
   }
 
   update() {
     // update all controllers
-    var destroyedControllers = [];
+    /*var destroyedControllers = [];
     for (var controller of this.controllers) {
       controller.update();
 
@@ -86,18 +97,14 @@ class GrandSlamGameClient {
       }
     }
 
-    this.remotePlayerManager.update();
+    this.remotePlayerManager.update();*/
+
+    this.characterManager.update();
 
     this.hud.update();
   }
 
   render() {
     this.phaserGame.debug.text(this.phaserGame.time.fps || '--', 2, 14, "#FF0000");
-  }
-
-  /* Private Helper Functions */
-  setCameraFollow(targetSprite) {
-    this.phaserGame.camera.follow(targetSprite, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
-    console.log("camera bounds: " + this.phaserGame.camera.bounds)
   }
 }

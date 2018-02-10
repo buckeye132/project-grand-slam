@@ -1,14 +1,16 @@
 class EventBus {
-  constructor(gameId, playerId) {
-    this.eventEmitter = new EventEmitter();
-    this.socket = io('/' + gameId);
+  constructor(game, playerId = null) {
+    this.eventEmitter = new game.factory.EventEmitter();
     this.playerId = playerId;
 
-    this.socket.on('connect', function() {
-      this.socket.emit('player_id', {playerId: this.playerId});
+    if (playerId) {
+      this.socket = io('/' + game.gameId);
+      this.socket.on('connect', function() {
+        this.socket.emit('player_id', {playerId: this.playerId});
 
-      this.socket.emit('random_event', {playerId: this.playerId});
-    }.bind(this));
+        this.socket.emit('random_event', {playerId: this.playerId});
+      }.bind(this));
+    }
   }
 
   /*

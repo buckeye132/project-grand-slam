@@ -1,6 +1,10 @@
 {
   "level": {
     "name": "test_level",
+    "worldSize": {
+      "width": 1680,
+      "height": 2400
+    },
     "mapLayers": [
       {
         "mapName": "test_map",

@@ -8,14 +8,17 @@ const CHARACTER_KEY_CAPTURES = [Phaser.KeyCode.ESC];
 const POSITION_EVENT_INTERVAL = 1000 / 30; // 30 / sec
 
 class PlayerCharacterController {
-  constructor(x, y, buildConfig, game, playerId) {
+  constructor(x, y, buildConfig, game) {
     this.game = game;
-    this.playerId = playerId;
+    this.playerId = game.playerId;
     this.nextPositionEventIn = 0;
     this.buildConfig = buildConfig;
 
-    this.character = new Character(x, y, this.game, buildConfig.spriteName,
-      playerId, buildConfig.moveSpeed, buildConfig.maxHealth);
+    this.character = new Character(this.game, buildConfig.characterConfig,
+      this.playerId, true, false);
+    this.character.position = { x: x, y: y };
+    this.game.phaserGame.camera.follow(this.character.sprite,
+      Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
 
     // initialize keyboard input
     for (var keyCapture of CHARACTER_KEY_CAPTURES) {
@@ -28,23 +31,24 @@ class PlayerCharacterController {
     }
 
     // listen for enemy_click events to set targeting
-    this.game.eventBus.subscribe("enemy_click", this.enemyClickListener, this);
+    //this.game.eventBus.subscribe("enemy_click", this.enemyClickListener, this);
 
     // equip a basic melee weapon
-    this.weapon = this.game.weaponManager.createWeapon(buildConfig.weapon);
+    //this.weapon = this.game.weaponManager.createWeapon(buildConfig.weapon);
     this.autoAttacking = false;
 
     // equip skills
     this.skills = [];
-    for (var i = 0; i < buildConfig.skills.length; i++) {
+    /*for (var i = 0; i < buildConfig.skills.length; i++) {
       var skill = this.game.skillManager.createSkill(buildConfig.skills[i]);
       skill.publishIcon("set_skill_" + i.toString());
       this.skills.push(skill);
       this.game.eventBus.subscribe("skill_" + i.toString() + "_click",
         this.skillClickListener, this);
-    }
+    }*/
   }
 
+  /* Event Handlers */
   enemyClickListener(data) {
     if (this.character.isDead) return;
 
@@ -70,6 +74,7 @@ class PlayerCharacterController {
     }
   }
 
+  /* Game Loop */
   update() {
     // did we die?
     if (this.character.isDead) {
@@ -107,10 +112,10 @@ class PlayerCharacterController {
 
     // perform child object update()
     this.character.update();
-    this.weapon.update();
+    /*this.weapon.update();
     for (var skill of this.skills) {
       skill.update();
-    }
+    }*/
 
     // check auto attack
     if (this.character.target && this.autoAttacking) {
@@ -123,31 +128,16 @@ class PlayerCharacterController {
     }
 
     // broadcast our position
-    var timeDelta = this.game.phaserGame.time.physicsElapsed;
-    this.nextPositionEventIn -= timeDelta*1000;
-    if (this.nextPositionEventIn < 0) {
-      this.nextPositionEventIn += POSITION_EVENT_INTERVAL;
-
-      var networkStatus = {};
-      networkStatus.healthPercent = (this.character.health / this.character.maxHealth);
-      networkStatus.health = this.character.health;
-      networkStatus.position = Object.assign({}, this.character.position);
-      networkStatus.playerId = this.playerId;
-      networkStatus.buildConfig = this.buildConfig;
-      networkStatus.currentAnimation = this.character.currentAnimation;
-      this.game.eventBus.publishNetwork("player_status", networkStatus)
-
-      var localStatus = Object.assign({}, networkStatus);
-      if (this.character.target) {
-        localStatus.targetHealthPercent =
-          (this.character.target.health / this.character.target.maxHealth);
-        localStatus.targetName = this.character.target.name;
-      }
-      localStatus.playerController = this;
-      this.game.eventBus.publish("player_status", localStatus);
+    var hudStatus = {};
+    if (this.character.target) {
+      hudStatus.targetHealthPercent =
+        (this.character.target.health / this.character.target.maxHealth);
+      hudStatus.targetName = this.character.target.name;
     }
+    this.game.eventBus.publish("hud_update", hudStatus);
   }
 
+  /* Public Interface */
   destroy() {
     this.character.destroy();
     this.game.eventBus.unsubscribe("enemy_click", this.enemyClickListener, this);

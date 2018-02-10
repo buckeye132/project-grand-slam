@@ -1,39 +1,56 @@
-class Character {
-  constructor(x, y, game, spriteName, name, moveSpeed, maxHealth) {
-    this.game = game;
-    this.name = name;
+const STATUS_EVENT_INTERVAL = 1000 / 30; // 30 / sec
 
-    this.moveSpeed = moveSpeed;
+class Character {
+  constructor(game, characterConfig, id, enableRendering, remotelyControlled) {
+    this.game = game;
+    this.id = id;
+    this.characterConfig = characterConfig;
+
+    this.enableRendering = enableRendering;
+    this.remotelyControlled = remotelyControlled;
+
+    this.moveSpeed = characterConfig.moveSpeed;
     this.target = null;
 
-    this.sprite = Character.createCharacterSprite(this.game, spriteName);
-    this.spriteGroup = game.phaserGame.add.group();
-    this.spriteGroup.add(this.sprite);
-    this.highlightSprite = null;
+    if (this.enableRendering) {
+      this.sprite = Character.createCharacterSprite(this.game,
+        characterConfig.spriteName);
+      this.spriteGroup = game.phaserGame.add.group();
+      this.spriteGroup.add(this.sprite);
+      this.highlightSprite = null;
 
-    this.sprite.x = x;
-    this.sprite.y = y;
-    this.previousPosition = {x: 0, y: 0};
+      // combat text emitted from this character
+      this.combatText = new CombatText(this.game, this);
+    } else {
+      // use dummy sprite objects to store position and velocity
+      this.sprite = {x: 0, y: 0, body: {velocity: {x: 0, y: 0}}};
+      this.highlightSprite = {x: 0, y: 0};
+    }
 
+    // animation related variables
     this.currentAnimation = "idle_down";
     this.lastFacing = "down";
     this.animationOverride = null;
 
-    this.health = maxHealth;
-    this.maxHealth = maxHealth;
+    // health tracking
+    this.health = characterConfig.maxHealth;
 
-    this.combatText = new CombatText(this.game, this);
+    // status update timer
+    this.lastStatusUpdate = 0;
+
+    // setup remote control if necessary
+    if (this.remotelyControlled) {
+      this.game.eventBus.subscribeNetwork("character_status_broadcast",
+        this.handleRemoteStatusUpdate, this);
+    }
   }
 
   static createCharacterSprite(game, name) {
     var sprite = game.spriteManager.createSprite(0, 0, name);
     sprite.anchor.setTo(0.5, 0.5);
     sprite.inputEnabled = true;
-
-    //game.phaserGame.physics.enable([ sprite ], game.physicsEngine);
     game.phaserGame.physics.enable(sprite);
     sprite.body.collideWorldBounds = true
-
     return sprite;
   }
 
@@ -47,6 +64,41 @@ class Character {
       sprite.addChild(graphics);
 
       return sprite;
+  }
+
+  static CalculateAnimation(delta, position, lastFacing, target) {
+    // animation and facing is based on movement direction by default
+    var facing = lastFacing;
+    var movement = "idle";
+    if (Math.abs(delta.x) > 0 || Math.abs(delta.y) > 0) {
+      movement = "walk";
+
+      if (Math.abs(delta.x) > Math.abs(delta.y)) {
+        if (delta.x > 0) facing = "right";
+        else facing = "left";
+      } else {
+        if (delta.y > 0) facing = "down";
+        else facing = "up";
+      }
+    }
+
+    // if the character is targeting something, override facing
+    if (target) {
+      var deltaToTarget = {
+        x: target.position.x - position.x,
+        y: target.position.y - position.y
+      }
+
+      if (Math.abs(deltaToTarget.x) > Math.abs(deltaToTarget.y)) {
+        if (deltaToTarget.x > 0) facing = "right";
+        else facing = "left";
+      } else {
+        if (deltaToTarget.y > 0) facing = "down";
+        else facing = "up";
+      }
+    }
+
+    return {facing: facing, animation: movement + "_" + facing};
   }
 
   setMove(moveX, moveY) {
@@ -71,87 +123,78 @@ class Character {
   }
 
   set position(position) {
-    this.previousPosition.x = this.sprite.x;
-    this.previousPosition.y = this.sprite.y;
     this.sprite.x = position.x;
     this.sprite.y = position.y;
   }
 
   update() {
-    var delta = null
+    if (this.enableRendering) {
+      // check collisions with all map layers
+      for (var layer of this.game.mapLayers) {
+        this.game.phaserGame.physics.arcade.collide(this.sprite, layer);
+      }
+    }
+
     if (!this.animationOverride) {
-      delta = {
+      var delta = {
         x: this.sprite.body.velocity.x,
         y: this.sprite.body.velocity.y
       }
-    }
 
-    // check collisions with all map layers
-    for (var layer of this.game.mapLayers) {
-      this.game.phaserGame.physics.arcade.collide(this.sprite, layer);
-    }
+      var calculatedAnimation = Character.CalculateAnimation(delta,
+        this.position, this.lastFacing, this.target)
 
-    if (!this.animationOverride) {
-      // animation and facing is based on movement direction by default
-      var facing = this.lastFacing;
-      var movement = "idle";
-      if (Math.abs(delta.x) > 0 || Math.abs(delta.y) > 0) {
-        movement = "walk";
-
-        if (Math.abs(delta.x) > Math.abs(delta.y)) {
-          if (delta.x > 0) facing = "right";
-          else facing = "left";
-        } else {
-          if (delta.y > 0) facing = "down";
-          else facing = "up";
-        }
-      }
-
-      // if the character is targeting something, override facing
-      if (this.target) {
-        var deltaToTarget = {
-          x: this.target.position.x - this.position.x,
-          y: this.target.position.y - this.position.y
-        }
-
-        if (Math.abs(deltaToTarget.x) > Math.abs(deltaToTarget.y)) {
-          if (deltaToTarget.x > 0) facing = "right";
-          else facing = "left";
-        } else {
-          if (deltaToTarget.y > 0) facing = "down";
-          else facing = "up";
-        }
-      }
-
-      this.lastFacing = facing;
-      this.currentAnimation = movement + "_" + facing;
+      this.lastFacing = calculatedAnimation.facing;
+      this.currentAnimation = calculatedAnimation.animation;
     } else {
       this.currentAnimation = this.animationOverride;
     }
 
-    this.sprite.animations.play(this.currentAnimation);
+    if (this.enableRendering) {
+      this.sprite.animations.play(this.currentAnimation);
+      this.combatText.update();
+    }
 
     if (this.highlightSprite) {
       this.highlightSprite.x = this.sprite.x;
       this.highlightSprite.y = this.sprite.y;
     }
 
-    this.combatText.update();
+    // if this character is controlled locally, send a status update
+    if (!this.remotelyControlled) {
+      var currentTime = new Date().getTime();
+      if (this.lastStatusUpdate + STATUS_EVENT_INTERVAL <= currentTime) {
+        this.lastStatusUpdate = currentTime;
+
+        var networkStatus = {};
+        networkStatus.health = this.health;
+        networkStatus.position = Object.assign({}, this.position);
+        networkStatus.id = this.id;
+        networkStatus.characterConfig = Object.assign({}, this.characterConfig);
+        networkStatus.currentAnimation = this.currentAnimation;
+        this.game.eventBus.publishNetwork("character_status", networkStatus)
+      }
+    }
   }
 
   destroy() {
-    console.log("destroy");
-    if (this.sprite) {
-      this.sprite.destroy();
+    console.log("destroy character");
+    if (this.enableRendering) {
+      if (this.sprite) {
+        this.sprite.destroy();
+        delete this.sprite;
+      }
+      if (this.highlightSprite) {
+        this.highlightSprite.destroy();
+        delete this.highlightSprite;
+      }
+      if (this.combatText) {
+        this.combatText.destroy();
+        delete this.combatText;
+      }
+    } else {
       delete this.sprite;
-    }
-    if (this.highlightSprite) {
-      this.highlightSprite.destroy();
       delete this.highlightSprite;
-    }
-    if (this.combatText) {
-      this.combatText.destroy();
-      delete this.combatText;
     }
   }
 
@@ -164,7 +207,6 @@ class Character {
   }
 
   applyDamage(amount) {
-    console.log("Taking damage " + amount);
     this.health -= Math.min(amount, this.health);
     this.combatText.emitNumber(-amount);
   }
@@ -174,6 +216,8 @@ class Character {
   }
 
   set isHighlighted(flag)  {
+    if (!this.enableRendering) return;
+
     if (flag) {
       if (!this.highlightSprite) {
         this.highlightSprite = Character.createHighlightedCharacterSprite(this.game.phaserGame,
@@ -192,20 +236,32 @@ class Character {
   get distanceToTarget() {
     var distanceToTarget = -1;
     if (this.target) {
-      distanceToTarget = this.game.phaserGame.math.distance(
-        this.position.x,
-        this.position.y,
-        this.target.position.x,
-        this.target.position.y);
+      distanceToTarget = this.distanceTo(this.target.position);
     }
     return distanceToTarget;
   }
 
   distanceTo(position) {
-    return this.game.phaserGame.math.distance(
-      this.position.x,
-      this.position.y,
-      position.x,
-      position.y);
+    var delta = {
+      x: Math.abs(position.x - this.position.x),
+      y: Math.abs(position.y - this.position.y)
+    };
+    return Math.sqrt(Math.pow(delta.x, 2) + Math.pow(delta.y, 2));
   }
+
+  handleRemoteStatusUpdate(data) {
+    if (data[this.id]) {
+      var updatedStatus = data[this.id];
+      this.health = updatedStatus.health;
+      this.position = Object.assign({}, updatedStatus.position);
+      this.animationOverride = updatedStatus.currentAnimation;
+    } else {
+      // omission from the update indicates we shouldn't exist anymore
+      this.destroy();
+    }
+  }
+}
+
+if (typeof window === 'undefined') {
+  module.exports = Character;
 }

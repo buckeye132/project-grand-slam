@@ -1,11 +1,7 @@
-if (typeof window === 'undefined') {
-  var EventEmitter = require('events');
-}
-
 class EventServer {
-  constructor(gameId, io) {
-    this.nsp = io.of('/' + gameId);
-    this.eventEmitter = new EventEmitter();
+  constructor(game, io) {
+    this.nsp = io.of('/' + game.gameId);
+    this.eventEmitter = new game.factory.EventEmitter();
 
     this.playerSockets = new Map();
 
@@ -36,7 +32,8 @@ class EventServer {
 
       socket.on("*",function(eventName,data) {
         if (eventName !== 'player_left') {
-          this.eventEmitter.emit(eventName, {playerId: socket.playerId, data: data});
+          this.eventEmitter.emitEvent(eventName,
+            [{playerId: socket.playerId, data: data}]);
         }
       }.bind(this));
 
@@ -44,15 +41,15 @@ class EventServer {
   }
 
   subscribePlayerJoin(listener, context) {
-    this.eventEmitter.on("player_join", listener.bind(context));
+    this.eventEmitter.addListener("player_join", listener.bind(context));
   }
 
   subscribePlayerLeave(listener, context) {
-    this.eventEmitter.on("player_left", listener.bind(context));
+    this.eventEmitter.addListener("player_left", listener.bind(context));
   }
 
   subscribe(eventName, listener, context) {
-    this.eventEmitter.on(eventName, listener.bind(context));
+    this.eventEmitter.addListener(eventName, listener.bind(context));
   }
 
   broadcast(eventName, data) {

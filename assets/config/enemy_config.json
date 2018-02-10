@@ -1,34 +1,40 @@
 {
-  "enemyTypes": [
-    {
-      "name": "baddie1",
-      "spriteName": "baddie1",
+  "enemyTypes": {
+    "baddie1": {
+      "type": "baddie1",
       "weaponName": "basic_enemy_sword",
-      "movementSpeed": 50,
       "desiredRange": 90,
       "agroRange": 300,
       "chaseDistance": 500,
-      "maxHealth": 100
+      "characterConfig": {
+        "maxHealth": 100,
+        "movementSpeed": 50,
+        "spriteName": "baddie1"
+      }
     },
-    {
-      "name": "baddie2",
-      "spriteName": "baddie2",
+    "baddie2": {
+      "type": "baddie2",
       "weaponName": "basic_enemy_sword",
-      "movementSpeed": 50,
       "desiredRange": 90,
       "agroRange": 300,
       "chaseDistance": 500,
-      "maxHealth": 100
+      "characterConfig": {
+        "maxHealth": 100,
+        "movementSpeed": 50,
+        "spriteName": "baddie2"
+      }
     },
-    {
-      "name": "baddie3",
-      "spriteName": "baddie3",
+    "baddie3": {
+      "type": "baddie3",
       "weaponName": "basic_enemy_sword",
-      "movementSpeed": 50,
       "desiredRange": 90,
       "agroRange": 300,
       "chaseDistance": 500,
-      "maxHealth": 100
+      "characterConfig": {
+        "maxHealth": 100,
+        "movementSpeed": 50,
+        "spriteName": "baddie3"
+      }
     }
-  ]
+  }
 }

@@ -1,7 +1,8 @@
 class MapManager {
   constructor(mapConfigPath, game) {
     this.game = game;
-    this.config = JSONConfigLoader.LoadJson(mapConfigPath);
+    this.config = game.factory.JSONConfigLoader.LoadJson(mapConfigPath,
+      game.factory.fs);
 
     this.preloadedMaps = new Map();
     this.tilemaps = new Map();

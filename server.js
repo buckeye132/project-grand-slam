@@ -4,7 +4,7 @@ const server = require('http').Server(app);
 const io = require('socket.io').listen(server);
 const uuid = require('uuid/v4');
 
-const GrandSlameGameServer = require('./src/GrandSlamGameServer');
+const GrandSlamGameServer = require('./src/GrandSlamGameServer');
 
 /*
  * Express server
@@ -48,7 +48,7 @@ io.on('connection',function(socket) {
     var newGameId = uuid();
 
     // start an instance of the game server
-    var gameServerInstance = new GrandSlameGameServer(newGameId, io);
+    var gameServerInstance = new GrandSlamGameServer(newGameId, io);
     gameInstances.set(newGameId, gameServerInstance);
 
     // tell client to go ahead and join
@@ -63,7 +63,7 @@ io.on('connection',function(socket) {
     // if it's not already running, start a new instance
     // TODO - make thread safe!
     if (!gameServerInstance) {
-      gameServerInstance = new GrandSlameGameServer(newGameId, io);
+      gameServerInstance = new GrandSlamGameServer(newGameId, io);
       gameInstances.set(joinGameId, gameServerInstance);
     }
 

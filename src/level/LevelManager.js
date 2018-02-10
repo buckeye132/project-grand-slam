@@ -1,6 +1,7 @@
 class LevelManager {
   constructor(levelConfigPath, game) {
-    this.config = JSONConfigLoader.LoadJson(levelConfigPath);
+    this.config = game.factory.JSONConfigLoader.LoadJson(
+      levelConfigPath, game.factory.fs);
     this.game = game;
 
     this.nextPlayerSpawnIndex = 0;
@@ -9,12 +10,12 @@ class LevelManager {
   transformRelativePosition(relativePosition) {
     // position can be negative to indicate relative inset from bottom or right of world
     //  we need to transform these into absolute positions
-    var position = relativePosition;
+    var position = Object.assign({}, relativePosition);
     if (position.x < 0) {
-      position.x = this.game.phaserGame.world.width + position.x;
+      position.x = this.config.level.worldSize.width + position.x;
     }
     if (position.y < 0) {
-      position.y = this.game.phaserGame.world.height + position.y;
+      position.y = this.config.level.worldSize.height + position.y;
     }
 
     return position;
@@ -57,4 +58,8 @@ class LevelManager {
 
     return enemies;
   }
+}
+
+if (typeof window === 'undefined') {
+  module.exports = LevelManager;
 }

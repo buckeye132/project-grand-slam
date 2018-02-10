@@ -4,7 +4,8 @@ class PlayerBuildManager {
     this.playerBuildMap = new Map();
 
     for (var configFilePath of configFilePaths) {
-      var config = JSONConfigLoader.LoadJson(configFilePath);
+      var config = game.factory.JSONConfigLoader.LoadJson(configFilePath,
+        game.factory.fs);
 
       for (var buildConfig of config.playerBuilds) {
         this.playerBuildMap.set(buildConfig.name, buildConfig);
@@ -19,6 +20,7 @@ class PlayerBuildManager {
       return null;
     }
 
-    return new PlayerCharacterController(x, y, buildConfig, this.game, playerId);
+    return new this.game.factory.PlayerCharacterController(x, y, buildConfig,
+      this.game, playerId);
   }
 }
