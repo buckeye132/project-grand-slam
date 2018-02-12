@@ -8,6 +8,9 @@ class Character {
     this.characterConfig = characterConfig;
     this.faction = faction;
 
+    // TODO - implement real names
+    this.name = characterConfig.spriteName;
+
     this.enableRendering = enableRendering;
     this.remotelyControlled = remotelyControlled;
 
@@ -20,6 +23,13 @@ class Character {
       this.spriteGroup = game.phaserGame.add.group();
       this.spriteGroup.add(this.sprite);
       this.highlightSprite = null;
+
+      // listen for clicks
+      this.sprite.events.onInputDown.add(this.handleInputDown, this);
+
+      // listen for highlighting updates
+      this.game.eventBus.subscribe("highlight_character",
+        this.handleHighlightCharacter, this);
 
       // combat text emitted from this character
       this.combatText = new CombatText(this.game, this);
@@ -36,6 +46,7 @@ class Character {
 
     // health tracking
     this.health = characterConfig.maxHealth;
+    this.maxHealth = characterConfig.maxHealth;
 
     // timer values
     this.lastStatusUpdate = 0;
@@ -48,6 +59,7 @@ class Character {
     }
   }
 
+  /* static */
   static createCharacterSprite(game, name) {
     var sprite = game.spriteManager.createSprite(0, 0, name);
     sprite.anchor.setTo(0.5, 0.5);
@@ -104,36 +116,34 @@ class Character {
     return {facing: facing, animation: movement + "_" + facing};
   }
 
-  setMove(moveX, moveY) {
-    if (moveX == 0 && moveY == 0) {
-        this.sprite.body.velocity.x = 0;
-        this.sprite.body.velocity.y = 0;
+  /* event Listeners */
+  handleRemoteStatusUpdate(data) {
+    if (data[this.id]) {
+      var updatedStatus = data[this.id];
+      this.health = updatedStatus.health;
+      this.position = Object.assign({}, updatedStatus.position);
+      this.animationOverride = updatedStatus.currentAnimation;
     } else {
-      // normalize and scale the input based on the move speed of this character
-      var preScaleX = moveX * this.moveSpeed;
-      var preScaleY = moveY * this.moveSpeed;
-      var preScaleTotal = Math.sqrt(Math.pow(preScaleX, 2) + Math.pow(preScaleY, 2));
-      var scaleFactor = this.moveSpeed / preScaleTotal;
-
-      // set velocity based on the scale factor calculated
-      this.sprite.body.velocity.x = scaleFactor * preScaleX;
-      this.sprite.body.velocity.y = scaleFactor * preScaleY;
+      // omission from the update indicates we shouldn't exist anymore
+      console.log("remote broadcast destroy");
+      if (!this.isDestroyed) this.destroy();
     }
-
   }
 
-  get position() {
-    return {
-      x: this.sprite.x,
-      y: this.sprite.y
-    };
+  handleInputDown(gameObject, pointer) {
+    // ignore click events if we're distroyed
+    if (this.isDestroyed) return;
+
+    // notify that we were clicked using an event
+    this.game.eventBus.publish("character_click",
+      {characterId: this.id, pointer: pointer});
   }
 
-  set position(position) {
-    this.sprite.x = position.x;
-    this.sprite.y = position.y;
+  handleHighlightCharacter(data) {
+    this.isHighlighted = data.characterId === this.id;
   }
 
+  /* game phases */
   update() {
     if (this.enableRendering) {
       // if we are using phaser, velocity is handled automatically
@@ -164,8 +174,10 @@ class Character {
         y: this.sprite.body.velocity.y
       }
 
+      // override target for animation if we're targeting ourselves
+      var animationTarget = this.targetingSelf ? null : this.target;
       var calculatedAnimation = Character.CalculateAnimation(delta,
-        this.position, this.lastFacing, this.target)
+        this.position, this.lastFacing, animationTarget)
 
       this.lastFacing = calculatedAnimation.facing;
       this.currentAnimation = calculatedAnimation.animation;
@@ -201,6 +213,24 @@ class Character {
     }
   }
 
+  /* public Interface */
+  setMove(moveX, moveY) {
+    if (moveX == 0 && moveY == 0) {
+        this.sprite.body.velocity.x = 0;
+        this.sprite.body.velocity.y = 0;
+    } else {
+      // normalize and scale the input based on the move speed of this character
+      var preScaleX = moveX * this.moveSpeed;
+      var preScaleY = moveY * this.moveSpeed;
+      var preScaleTotal = Math.sqrt(Math.pow(preScaleX, 2) + Math.pow(preScaleY, 2));
+      var scaleFactor = this.moveSpeed / preScaleTotal;
+
+      // set velocity based on the scale factor calculated
+      this.sprite.body.velocity.x = scaleFactor * preScaleX;
+      this.sprite.body.velocity.y = scaleFactor * preScaleY;
+    }
+  }
+
   destroy() {
     console.log("destroy character");
     if (this.enableRendering) {
@@ -216,23 +246,48 @@ class Character {
         this.combatText.destroy();
         delete this.combatText;
       }
+
+      this.game.eventBus.unsubscribe("highlight_character",
+        this.handleHighlightCharacter, this);
     } else {
       delete this.sprite;
       delete this.highlightSprite;
     }
-  }
 
-  get isDestroyed() {
-    return this.sprite == null;
-  }
-
-  onInputDown(callback, context) {
-    this.sprite.events.onInputDown.add(callback, context);
+    if (this.remotelyControlled) {
+      this.game.eventBus.unsubscribeNetwork("character_status_broadcast",
+        this.handleRemoteStatusUpdate, this);
+    }
   }
 
   applyDamage(amount) {
     this.health -= Math.min(amount, this.health);
     this.combatText.emitNumber(-amount);
+  }
+
+  distanceTo(position) {
+    var delta = {
+      x: Math.abs(position.x - this.position.x),
+      y: Math.abs(position.y - this.position.y)
+    };
+    return Math.sqrt(Math.pow(delta.x, 2) + Math.pow(delta.y, 2));
+  }
+
+  /* public getters / setters */
+  get position() {
+    return {
+      x: this.sprite.x,
+      y: this.sprite.y
+    };
+  }
+
+  set position(position) {
+    this.sprite.x = position.x;
+    this.sprite.y = position.y;
+  }
+
+  get isDestroyed() {
+    return this.sprite == null;
   }
 
   get isDead() {
@@ -265,25 +320,12 @@ class Character {
     return distanceToTarget;
   }
 
-  distanceTo(position) {
-    var delta = {
-      x: Math.abs(position.x - this.position.x),
-      y: Math.abs(position.y - this.position.y)
-    };
-    return Math.sqrt(Math.pow(delta.x, 2) + Math.pow(delta.y, 2));
+  get targetingSelf() {
+    return this.target && this.id === this.target.id;
   }
 
-  handleRemoteStatusUpdate(data) {
-    if (data[this.id]) {
-      var updatedStatus = data[this.id];
-      this.health = updatedStatus.health;
-      this.position = Object.assign({}, updatedStatus.position);
-      this.animationOverride = updatedStatus.currentAnimation;
-    } else {
-      // omission from the update indicates we shouldn't exist anymore
-      this.destroy();
-    }
-  }
+  /* private healpers */
+
 }
 
 if (typeof window === 'undefined') {

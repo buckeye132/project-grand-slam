@@ -31,8 +31,9 @@ class PlayerCharacterController {
       this.keyMap.set(alias, key);
     }
 
-    // listen for enemy_click events to set targeting
-    //this.game.eventBus.subscribe("enemy_click", this.enemyClickListener, this);
+    // listen for characters being clicked by the player
+    this.game.eventBus.subscribe("character_click", this.characterClickListener,
+      this);
 
     // equip a basic melee weapon
     //this.weapon = this.game.weaponManager.createWeapon(buildConfig.weapon);
@@ -50,18 +51,34 @@ class PlayerCharacterController {
   }
 
   /* Event Handlers */
-  enemyClickListener(data) {
+  characterClickListener(data) {
+    // ignore clicking if we're dead
     if (this.character.isDead) return;
 
-    if (!data.enemyController) {
+    if (!data.characterId) {
+      // null character ID indicates cancel request (untarget)
       this.character.target = null;
       this.autoAttacking = false;
     } else {
-      this.character.target = data.enemyController.character;
-      if (data.pointer.rightButton.isDown) {
+      // find the character that was clicked
+      var character = this.game.characterManager.findCharacterById(
+        data.characterId);
+      if (character === null) {
+        console.error("Cannot find character that was clicked!");
+        return;
+      }
+
+      this.character.target = character;
+      if (data.pointer.rightButton.isDown &&
+          this.faction !== character.faction) {
+        // if it's an enemy and the player requested attack, start attacking
         this.autoAttacking = true;
       }
     }
+
+    // publish an event to update who's highlighted
+    this.game.eventBus.publish("highlight_character",
+      {characterId: data.characterId});
   }
 
   skillClickListener(data) {
@@ -105,7 +122,8 @@ class PlayerCharacterController {
       moveX++;
     }
     if (this.keyMap.get("CANCEL").isDown) {
-      this.game.eventBus.publish("enemy_click", {enemyController: null, pointer: null});
+      this.game.eventBus.publish("character_click",
+        {characterId: null, pointer: null});
     }
 
     // update character state
@@ -130,12 +148,13 @@ class PlayerCharacterController {
 
     // broadcast our position
     var hudStatus = {};
+    hudStatus.healthPercent = (this.health / this.maxHealth);
     if (this.character.target) {
       hudStatus.targetHealthPercent =
         (this.character.target.health / this.character.target.maxHealth);
       hudStatus.targetName = this.character.target.name;
     }
-    this.game.eventBus.publish("hud_update", hudStatus);
+    this.game.eventBus.publish("hud_status", hudStatus);
   }
 
   /* Public Interface */
@@ -150,5 +169,25 @@ class PlayerCharacterController {
 
   get isDestroyed() {
     return this.character.isDestroyed;
+  }
+
+  get faction() {
+    return this.character.faction;
+  }
+
+  get id() {
+    return this.character.id;
+  }
+
+  get name() {
+    return this.character.name;
+  }
+
+  get health() {
+    return this.character.health;
+  }
+
+  get maxHealth() {
+    return this.character.maxHealth;
   }
 }

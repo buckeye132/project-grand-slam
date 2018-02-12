@@ -38,6 +38,7 @@ class CharacterManager {
     if (this.isServer) {
       // remove the player's character from our character map
       if(this.characters.has(data.playerId)) {
+        console.log("deleting character");
         this.characters.get(data.playerId).destroy();
         this.characters.delete(data.playerId);
       }

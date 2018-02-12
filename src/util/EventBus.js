@@ -42,6 +42,18 @@ class EventBus {
     }
   }
 
+  unsubscribeNetwork(eventName, listener, context) {
+    if (this.isClient) {
+      if (this.socket) {
+        this.socket.removeListener(eventName,
+          listener.bind(context));
+      }
+    } else {
+      console.log("remove from loopback");
+      this.loopBackBus.removeListener(eventName, listener.bind(context));
+    }
+  }
+
   publishNetwork(eventName, data) {
     if (this.isClient) {
       if (this.socket) this.socket.emit(eventName, data);

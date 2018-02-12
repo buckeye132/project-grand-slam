@@ -25,14 +25,9 @@ class EnemyCharacterController {
       this.weapon = this.game.weaponManager.createWeapon(config.weaponName);
     }*/
 
-
-
-    // detect mouse click input
-    /*this.character.onInputDown(this.clickCallback, this);
-
     // listen for enemy_click events to control highlighting
-    this.game.eventBus.subscribe("enemy_click", this.enemyClickListener, this);
-    */
+    //this.game.eventBus.subscribe("enemy_click", this.enemyClickListener, this);
+
 
     // listen for character status broadcasts
     this.game.eventBus.subscribeNetwork("character_status_broadcast",
@@ -40,14 +35,6 @@ class EnemyCharacterController {
   }
 
   /* Input Callbacks */
-  // this needs to move into the character class..
-  /*clickCallback(gameObject, pointer) {
-    if (this.isDestroyed) {
-      return;
-    }
-
-    this.game.eventBus.publish("enemy_click", {enemyController: this, pointer: pointer});
-  }*/
 
   /* Event Bus Listeners */
   /*enemyClickListener(data) {
