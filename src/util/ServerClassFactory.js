@@ -7,6 +7,7 @@ const fs = require('fs');
 const JSONConfigLoader = require('./JSONConfigLoader');
 const Character = require('../character/Character');
 const EventEmitter = require('wolfy87-eventemitter');
+const EnemyCharacterController = require('../character/EnemyCharacterController');
 
 class ServerClassFactory {
   constructor() {
@@ -19,6 +20,7 @@ class ServerClassFactory {
     this.Character = Character;
     this.fs = fs;
     this.EventEmitter = EventEmitter;
+    this.EnemyCharacterController = EnemyCharacterController;
   }
 }
 

@@ -26,7 +26,7 @@ var Game = window.Game || {};
   var phaserGame = this.phaserGame = new Phaser.Game(
     window.innerWidth * window.devicePixelRatio,
     window.innerHeight * window.devicePixelRatio,
-    Phaser.AUTO,
+    Phaser.CANVAS,
     "game",
     gameState);
   gsGame.phaserGame = phaserGame;

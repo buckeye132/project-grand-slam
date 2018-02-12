@@ -24,6 +24,9 @@ class GrandSlamGameServer {
     this.eventServer.subscribePlayerLeave(this.playerLeave, this);
     this.characterManager.enableEvents();
 
+    // spawn enemies
+    this.characterManager.spawnLocalEnemies(this.levelManager.enemyList);
+
     // set game loop interval
     setInterval(this.update.bind(this), TICK_TIME);
   }

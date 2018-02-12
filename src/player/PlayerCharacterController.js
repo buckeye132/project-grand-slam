@@ -6,16 +6,17 @@ const CHARACTER_KEY_BINDINGS = new Map(
   ["CANCEL", Phaser.KeyCode.ESC]]);
 const CHARACTER_KEY_CAPTURES = [Phaser.KeyCode.ESC];
 const POSITION_EVENT_INTERVAL = 1000 / 30; // 30 / sec
+const PLAYER_FACTION = "player";
 
 class PlayerCharacterController {
   constructor(x, y, buildConfig, game) {
     this.game = game;
-    this.playerId = game.playerId;
+    this.playerId = game.playerId; // take id of local player
     this.nextPositionEventIn = 0;
     this.buildConfig = buildConfig;
 
     this.character = new Character(this.game, buildConfig.characterConfig,
-      this.playerId, true, false);
+      this.playerId, true, false, PLAYER_FACTION);
     this.character.position = { x: x, y: y };
     this.game.phaserGame.camera.follow(this.character.sprite,
       Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);

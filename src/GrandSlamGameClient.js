@@ -42,6 +42,8 @@ class GrandSlamGameClient {
 
   create() {
     // game setup
+    // TODO - make scaling work while game is running
+    //this.phaserGame.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
     this.phaserGame.stage.disableVisibilityChange = true;
     this.phaserGame.time.advancedTiming = true;
     this.phaserGame.input.mouse.capture = true;

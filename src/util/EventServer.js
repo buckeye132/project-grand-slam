@@ -1,5 +1,6 @@
 class EventServer {
   constructor(game, io) {
+    this.game = game;
     this.nsp = io.of('/' + game.gameId);
     this.eventEmitter = new game.factory.EventEmitter();
 
@@ -50,10 +51,14 @@ class EventServer {
 
   subscribe(eventName, listener, context) {
     this.eventEmitter.addListener(eventName, listener.bind(context));
+    this.game.eventBus.subscribeNetwork(eventName, function(data) {
+        this.listener({playerId: null, data: data})
+      }, {listener: listener.bind(context)});
   }
 
   broadcast(eventName, data) {
     this.nsp.emit(eventName, data);
+    this.game.eventBus.publishNetwork(eventName, data);
   }
 
   emit(playerId, eventName, data) {

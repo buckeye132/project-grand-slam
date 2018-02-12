@@ -1,5 +1,5 @@
-ENEMY_CONFIG_LOCATION = "assets/config/enemy_config.json";
-PLAYER_CONFIG_LOCATION = "assets/config/player_config.json";
+const ENEMY_CONFIG_LOCATION = "assets/config/enemy_config.json";
+const PLAYER_CONFIG_LOCATION = "assets/config/player_config.json";
 
 class CharacterManager {
   constructor(game, enableRendering) {
@@ -22,7 +22,7 @@ class CharacterManager {
     if (this.isServer) {
       // depending where the event is coming from, data is structured a bit differently
       var statusData = data.data;
-      var characterId = data.playerId;
+      var characterId = data.data.id;
       if (!data) {
         statusData = data;
         characterId = data.id;
@@ -74,17 +74,24 @@ class CharacterManager {
     }
   }
 
-  handlePlayerStatusBroadcast(data) {
-    // if we're on the client
-    if (this.isClient) {
-      // check for new characters that we don't know about
-      for (var playerId in data) {
-        if (!this.characters.has(playerId)) {
-          console.log("Found previously unknown character: " + JSON.stringify(data[playerId]));
-          var newCharacter = new this.game.factory.Character(this.game,
-            data[playerId].characterConfig, playerId, this.isClient, true);
-          this.characters.set(playerId, newCharacter);
-        }
+  handleCharacterStatusBroadcast(data) {
+    // check for new characters that we don't know about
+    for (var characterId in data) {
+      if (!this.characters.has(characterId)) {
+        // create a new character based on the data recieved in the event
+        var characterData = data[characterId];
+        console.log("Found previously unknown character: " +
+          JSON.stringify(characterData));
+        var newCharacter = new this.game.factory.Character(
+          this.game,
+          characterData.characterConfig,
+          characterId,
+          this.isClient,
+          true,
+          characterData.faction);
+
+        // track it in our character map
+        this.characters.set(characterId, newCharacter);
       }
     }
   }
@@ -107,7 +114,9 @@ class CharacterManager {
     if (this.isServer) {
       // load enemy config
       if (!this.enemyConfig) {
-        this.enemyConfig = JSONConfigLoader.LoadJson(ENEMY_CONFIG_LOCATION).enemyTypes;
+        this.enemyConfig = this.game.factory.JSONConfigLoader
+          .LoadJson(ENEMY_CONFIG_LOCATION, this.game.factory.fs)
+          .enemyTypes;
       }
 
       // spawn the requested enemies
@@ -116,15 +125,20 @@ class CharacterManager {
         if (!config) {
           console.error("Tried to spawn unknown enemy type: ", enemyData.type);
           continue;
+        } else {
+          console.log("Spawning enemy: " + JSON.stringify(config));
         }
 
         // generate a guid for this new character
-        var newCharacterId = uuid();
+        var newCharacterId = this.game.factory.uuid();
 
         // create the character object
-        // TODO - move this into the enemy character controller
-        var newCharacter = new this.game.factory.Character(this.game,
-          config.characterConfig, newCharacterId, false, true);
+        var newCharacter = new this.game.factory.EnemyCharacterController(
+          enemyData.position.x,
+          enemyData.position.y,
+          config,
+          this.game,
+          newCharacterId);
         this.characters.set(newCharacterId, newCharacter);
       }
     }
@@ -142,9 +156,9 @@ class CharacterManager {
       this.characterStatusAggregate = {};
 
       // register event listeners
+      this.game.eventBus.subscribeNetwork("character_status_broadcast",
+        this.handleCharacterStatusBroadcast, this);
       this.game.eventServer.subscribe("character_status",
-        this.handleCharacterStatus, this);
-      this.game.eventBus.subscribe("character_status",
         this.handleCharacterStatus, this);
       this.game.eventServer.subscribePlayerLeave(this.handlePlayerLeave, this);
       this.game.eventServer.subscribe("spawn_player_request",
@@ -152,7 +166,7 @@ class CharacterManager {
     } else { // client
       // register event listeners
       this.game.eventBus.subscribeNetwork("character_status_broadcast",
-        this.handlePlayerStatusBroadcast, this);
+        this.handleCharacterStatusBroadcast, this);
       this.game.eventBus.subscribeNetwork("spawn_player",
         this.handleSpawnLocalPlayer, this);
     }
@@ -184,6 +198,10 @@ class CharacterManager {
       this.game.eventServer.broadcast("character_status_broadcast",
         this.characterStatusAggregate);
     }
+  }
+
+  findCharacterById(characterId) {
+    return this.characters.get(characterId);
   }
 
   /* Helpers */

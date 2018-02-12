@@ -5,6 +5,11 @@ class LevelManager {
     this.game = game;
 
     this.nextPlayerSpawnIndex = 0;
+
+    // correct relative positions
+    for (var enemyConfig of this.config.level.enemies) {
+      enemyConfig.position = this.transformRelativePosition(enemyConfig.position);
+    }
   }
 
   transformRelativePosition(relativePosition) {
@@ -45,18 +50,8 @@ class LevelManager {
     return this.transformRelativePosition(this.config.level.playerSpawns[spawnIndex]);
   }
 
-  createEnemies() {
-    var enemies = [];
-    for (var enemyConfig of this.config.level.enemies) {
-      var position = this.transformRelativePosition(enemyConfig.position);
-
-
-      var enemy = this.game.enemyManager.createEnemy(enemyConfig.type,
-        position.x, position.y);
-      enemies.push(enemy);
-    }
-
-    return enemies;
+  get enemyList() {
+    return this.config.level.enemies;
   }
 }
 

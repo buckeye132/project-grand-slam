@@ -1,10 +1,12 @@
 const STATUS_EVENT_INTERVAL = 1000 / 30; // 30 / sec
 
 class Character {
-  constructor(game, characterConfig, id, enableRendering, remotelyControlled) {
+  constructor(game, characterConfig, id, enableRendering, remotelyControlled,
+    faction) {
     this.game = game;
     this.id = id;
     this.characterConfig = characterConfig;
+    this.faction = faction;
 
     this.enableRendering = enableRendering;
     this.remotelyControlled = remotelyControlled;
@@ -23,7 +25,7 @@ class Character {
       this.combatText = new CombatText(this.game, this);
     } else {
       // use dummy sprite objects to store position and velocity
-      this.sprite = {x: 0, y: 0, body: {velocity: {x: 0, y: 0}}};
+      this.sprite = {x: 0.0, y: 0.0, body: {velocity: {x: 0.0, y: 0.0}}};
       this.highlightSprite = {x: 0, y: 0};
     }
 
@@ -35,8 +37,9 @@ class Character {
     // health tracking
     this.health = characterConfig.maxHealth;
 
-    // status update timer
+    // timer values
     this.lastStatusUpdate = 0;
+    this.lastUpdateTime = 0;
 
     // setup remote control if necessary
     if (this.remotelyControlled) {
@@ -103,16 +106,20 @@ class Character {
 
   setMove(moveX, moveY) {
     if (moveX == 0 && moveY == 0) {
-      this.sprite.body.velocity.x = 0;
-      this.sprite.body.velocity.y = 0;
+        this.sprite.body.velocity.x = 0;
+        this.sprite.body.velocity.y = 0;
     } else {
+      // normalize and scale the input based on the move speed of this character
       var preScaleX = moveX * this.moveSpeed;
       var preScaleY = moveY * this.moveSpeed;
       var preScaleTotal = Math.sqrt(Math.pow(preScaleX, 2) + Math.pow(preScaleY, 2));
-      var factor = this.moveSpeed / preScaleTotal;
-      this.sprite.body.velocity.x = factor * preScaleX;
-      this.sprite.body.velocity.y = factor * preScaleY;
+      var scaleFactor = this.moveSpeed / preScaleTotal;
+
+      // set velocity based on the scale factor calculated
+      this.sprite.body.velocity.x = scaleFactor * preScaleX;
+      this.sprite.body.velocity.y = scaleFactor * preScaleY;
     }
+
   }
 
   get position() {
@@ -129,9 +136,25 @@ class Character {
 
   update() {
     if (this.enableRendering) {
+      // if we are using phaser, velocity is handled automatically
       // check collisions with all map layers
       for (var layer of this.game.mapLayers) {
         this.game.phaserGame.physics.arcade.collide(this.sprite, layer);
+      }
+    } else {
+      // if we're not using phaser, we have to implement velocity manually
+      if (this.lastUpdateTime === 0) {
+        // this is the first update, don't move yet, just record time
+        this.lastUpdateTime = new Date().getTime();
+      } else {
+        var currentTime = new Date().getTime();
+        var timeDelta = (currentTime - this.lastUpdateTime) / 1000.0;
+        this.position = {
+          x: this.position.x + (this.sprite.body.velocity.x * timeDelta),
+          y: this.position.y + (this.sprite.body.velocity.y * timeDelta)
+        };
+
+        this.lastUpdateTime = currentTime;
       }
     }
 
@@ -172,6 +195,7 @@ class Character {
         networkStatus.id = this.id;
         networkStatus.characterConfig = Object.assign({}, this.characterConfig);
         networkStatus.currentAnimation = this.currentAnimation;
+        networkStatus.faction = this.faction;
         this.game.eventBus.publishNetwork("character_status", networkStatus)
       }
     }
