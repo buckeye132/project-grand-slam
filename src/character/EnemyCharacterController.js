@@ -2,6 +2,10 @@ const ENEMY_FACTION = "enemy";
 
 class EnemyCharacterController {
   constructor(x, y, enemyConfig, game, characterId) {
+    // bind event Listeners
+    this.handleCharacterStatusBroadcast = this.handleCharacterStatusBroadcast
+      .bind(this);
+
     this.game = game;
     this.characterId = characterId;
 
@@ -31,7 +35,7 @@ class EnemyCharacterController {
 
     // listen for character status broadcasts
     this.game.eventBus.subscribeNetwork("character_status_broadcast",
-      this.handleCharacterStatusBroadcast, this);
+      this.handleCharacterStatusBroadcast);
   }
 
   /* Input Callbacks */
@@ -147,6 +151,8 @@ class EnemyCharacterController {
   }
 
   destroy() {
+    this.game.eventBus.unsubscribeNetwork("character_status_broadcast",
+      this.handleCharacterStatusBroadcast);
     this.character.destroy();
   }
 

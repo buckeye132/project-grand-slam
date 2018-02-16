@@ -19,12 +19,12 @@ class EventBus {
   /*
    * local events
    */
-  subscribe(eventName, listener, context) {
-    this.eventEmitter.addListener(eventName, listener.bind(context));
+  subscribe(eventName, listener) {
+    this.eventEmitter.addListener(eventName, listener);
   }
 
-  unsubscribe(eventName, listener, context) {
-    this.eventEmitter.removeListener(eventName, listener.bind(context));
+  unsubscribe(eventName, listener) {
+    this.eventEmitter.removeListener(eventName, listener);
   }
 
   publish(eventName, data) {
@@ -34,23 +34,22 @@ class EventBus {
   /*
    * network events (from server)
    */
-  subscribeNetwork(eventName, listener, context) {
+  subscribeNetwork(eventName, listener) {
     if (this.isClient) {
-      if (this.socket) this.socket.on(eventName, listener.bind(context));
+      if (this.socket) this.socket.on(eventName, listener);
     } else {
-      this.loopBackBus.addListener(eventName, listener.bind(context));
+      this.loopBackBus.addListener(eventName, listener);
     }
   }
 
-  unsubscribeNetwork(eventName, listener, context) {
+  unsubscribeNetwork(eventName, listener) {
     if (this.isClient) {
       if (this.socket) {
-        this.socket.removeListener(eventName,
-          listener.bind(context));
+        this.socket.removeListener(eventName, listener);
       }
     } else {
       console.log("remove from loopback");
-      this.loopBackBus.removeListener(eventName, listener.bind(context));
+      this.loopBackBus.removeListener(eventName, listener);
     }
   }
 

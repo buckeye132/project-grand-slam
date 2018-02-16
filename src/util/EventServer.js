@@ -41,19 +41,19 @@ class EventServer {
     }.bind(this));
   }
 
-  subscribePlayerJoin(listener, context) {
-    this.eventEmitter.addListener("player_join", listener.bind(context));
+  subscribePlayerJoin(listener) {
+    this.eventEmitter.addListener("player_join", listener);
   }
 
-  subscribePlayerLeave(listener, context) {
-    this.eventEmitter.addListener("player_left", listener.bind(context));
+  subscribePlayerLeave(listener) {
+    this.eventEmitter.addListener("player_left", listener);
   }
 
-  subscribe(eventName, listener, context) {
-    this.eventEmitter.addListener(eventName, listener.bind(context));
+  subscribe(eventName, listener) {
+    this.eventEmitter.addListener(eventName, listener);
     this.game.eventBus.subscribeNetwork(eventName, function(data) {
         this.listener({playerId: null, data: data})
-      }, {listener: listener.bind(context)});
+      }.bind({listener: listener}));
   }
 
   broadcast(eventName, data) {

@@ -1,5 +1,8 @@
 class HUDButton {
   constructor(game, hud, config) {
+    this.sourceUpdateHandler = this.sourceUpdateHandler.bind(this);
+    this.clickHandler = this.clickHandler.bind(this);
+
     this.game = game;
     this.hud = hud;
     this.config = config;
@@ -22,7 +25,7 @@ class HUDButton {
 
     if (this.config.source.type == "event_bus") {
       this.game.eventBus.subscribe(this.config.source.eventName,
-        this.sourceUpdateHandler, this);
+        this.sourceUpdateHandler);
     } else {
       console.error("Unrecognized source type: " + this.config.source.type);
     }

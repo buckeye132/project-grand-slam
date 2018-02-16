@@ -3,6 +3,11 @@ const STATUS_EVENT_INTERVAL = 1000 / 30; // 30 / sec
 class Character {
   constructor(game, characterConfig, id, enableRendering, remotelyControlled,
     faction) {
+    // bind event Listeners
+    this.handleRemoteStatusUpdate = this.handleRemoteStatusUpdate.bind(this);
+    this.handleInputDown = this.handleInputDown.bind(this);
+    this.handleHighlightCharacter = this.handleHighlightCharacter.bind(this);
+
     this.game = game;
     this.id = id;
     this.characterConfig = characterConfig;
@@ -29,7 +34,7 @@ class Character {
 
       // listen for highlighting updates
       this.game.eventBus.subscribe("highlight_character",
-        this.handleHighlightCharacter, this);
+        this.handleHighlightCharacter);
 
       // combat text emitted from this character
       this.combatText = new CombatText(this.game, this);
@@ -55,7 +60,7 @@ class Character {
     // setup remote control if necessary
     if (this.remotelyControlled) {
       this.game.eventBus.subscribeNetwork("character_status_broadcast",
-        this.handleRemoteStatusUpdate, this);
+        this.handleRemoteStatusUpdate);
     }
   }
 
@@ -248,7 +253,7 @@ class Character {
       }
 
       this.game.eventBus.unsubscribe("highlight_character",
-        this.handleHighlightCharacter, this);
+        this.handleHighlightCharacter);
     } else {
       delete this.sprite;
       delete this.highlightSprite;
@@ -256,7 +261,7 @@ class Character {
 
     if (this.remotelyControlled) {
       this.game.eventBus.unsubscribeNetwork("character_status_broadcast",
-        this.handleRemoteStatusUpdate, this);
+        this.handleRemoteStatusUpdate);
     }
   }
 

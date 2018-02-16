@@ -10,6 +10,9 @@ const PLAYER_FACTION = "player";
 
 class PlayerCharacterController {
   constructor(x, y, buildConfig, game) {
+    this.characterClickListener = this.characterClickListener.bind(this);
+    this.skillClickListener = this.skillClickListener.bind(this);
+
     this.game = game;
     this.playerId = game.playerId; // take id of local player
     this.nextPositionEventIn = 0;
@@ -32,8 +35,7 @@ class PlayerCharacterController {
     }
 
     // listen for characters being clicked by the player
-    this.game.eventBus.subscribe("character_click", this.characterClickListener,
-      this);
+    this.game.eventBus.subscribe("character_click", this.characterClickListener);
 
     // equip a basic melee weapon
     //this.weapon = this.game.weaponManager.createWeapon(buildConfig.weapon);
@@ -46,7 +48,7 @@ class PlayerCharacterController {
       skill.publishIcon("set_skill_" + i.toString());
       this.skills.push(skill);
       this.game.eventBus.subscribe("skill_" + i.toString() + "_click",
-        this.skillClickListener, this);
+        this.skillClickListener);
     }*/
   }
 

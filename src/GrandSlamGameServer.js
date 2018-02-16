@@ -5,6 +5,9 @@ const TICK_TIME = 1000 / 60 // 60 TICK / SEC
 
 class GrandSlamGameServer {
   constructor(gameId, io) {
+    // bind event handlers
+    this.playerLeave = this.playerLeave.bind(this);
+
     console.log("Game Server Starting: ", gameId);
     this.gameId = gameId;
     this.becameEmptyAt = 0;
@@ -21,7 +24,7 @@ class GrandSlamGameServer {
     this.characterManager = new this.factory.CharacterManager(this, false);
 
     // subscribe event listeners
-    this.eventServer.subscribePlayerLeave(this.playerLeave, this);
+    this.eventServer.subscribePlayerLeave(this.playerLeave);
     this.characterManager.enableEvents();
 
     // spawn enemies

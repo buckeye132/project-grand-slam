@@ -3,6 +3,14 @@ const PLAYER_CONFIG_LOCATION = "assets/config/player_config.json";
 
 class CharacterManager {
   constructor(game, enableRendering) {
+    // bind event handlers
+    this.handleCharacterStatus = this.handleCharacterStatus.bind(this);
+    this.handlePlayerLeave = this.handlePlayerLeave.bind(this);
+    this.handleSpawnPlayerRequest = this.handleSpawnPlayerRequest.bind(this);
+    this.handleCharacterStatusBroadcast = this.handleCharacterStatusBroadcast
+      .bind(this);
+    this.handleSpawnLocalPlayer = this.handleSpawnLocalPlayer.bind(this);
+
     this.game = game;
     this.enableRendering = enableRendering;
 
@@ -158,18 +166,18 @@ class CharacterManager {
 
       // register event listeners
       this.game.eventBus.subscribeNetwork("character_status_broadcast",
-        this.handleCharacterStatusBroadcast, this);
+        this.handleCharacterStatusBroadcast);
       this.game.eventServer.subscribe("character_status",
-        this.handleCharacterStatus, this);
-      this.game.eventServer.subscribePlayerLeave(this.handlePlayerLeave, this);
+        this.handleCharacterStatus);
+      this.game.eventServer.subscribePlayerLeave(this.handlePlayerLeave);
       this.game.eventServer.subscribe("spawn_player_request",
-        this.handleSpawnPlayerRequest, this);
+        this.handleSpawnPlayerRequest);
     } else { // client
       // register event listeners
       this.game.eventBus.subscribeNetwork("character_status_broadcast",
-        this.handleCharacterStatusBroadcast, this);
+        this.handleCharacterStatusBroadcast);
       this.game.eventBus.subscribeNetwork("spawn_player",
-        this.handleSpawnLocalPlayer, this);
+        this.handleSpawnLocalPlayer);
     }
   }
 
@@ -181,7 +189,7 @@ class CharacterManager {
 
       // check for characters that have been destroyed
       if (character.isDestroyed) {
-        charactersToRemove.push(newCharacterId);
+        charactersToRemove.push(characterId);
       } else {
         // call update on all managed characters
         character.update();
